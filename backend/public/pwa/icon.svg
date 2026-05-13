@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Lost and Found Campus Admin">
+    <rect width="512" height="512" rx="96" fill="#047857"/>
+    <path fill="#ffffff" d="M128 158c0-24 20-44 44-44h168c24 0 44 20 44 44v220c0 24-20 44-44 44H172c-24 0-44-20-44-44V158Zm44-8c-4 0-8 4-8 8v220c0 4 4 8 8 8h168c4 0 8-4 8-8V158c0-4-4-8-8-8H172Z"/>
+    <path fill="#d1fae5" d="M198 205h116c10 0 18 8 18 18s-8 18-18 18H198c-10 0-18-8-18-18s8-18 18-18Zm0 72h116c10 0 18 8 18 18s-8 18-18 18H198c-10 0-18-8-18-18s8-18 18-18Z"/>
+    <circle cx="256" cy="350" r="24" fill="#fbbf24"/>
+</svg>

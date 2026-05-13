@@ -1,0 +1,64 @@
+{
+  "info": {
+    "name": "Lost & Found Campus API - Phase 2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api/v1" },
+    { "key": "user_token", "value": "" },
+    { "key": "admin_token", "value": "" },
+    { "key": "report_id", "value": "" },
+    { "key": "claim_id", "value": "" },
+    { "key": "notification_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        { "name": "Register", "request": { "method": "POST", "url": "{{base_url}}/auth/register" } },
+        { "name": "Login User", "request": { "method": "POST", "url": "{{base_url}}/auth/login" } },
+        { "name": "Login Admin", "request": { "method": "POST", "url": "{{base_url}}/auth/login" } },
+        { "name": "Me", "request": { "method": "GET", "url": "{{base_url}}/auth/me" } },
+        { "name": "Logout", "request": { "method": "POST", "url": "{{base_url}}/auth/logout" } }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        { "name": "List Categories", "request": { "method": "GET", "url": "{{base_url}}/categories" } },
+        { "name": "Admin Create Category", "request": { "method": "POST", "url": "{{base_url}}/categories" } },
+        { "name": "Admin Update Category", "request": { "method": "PUT", "url": "{{base_url}}/categories/:category_id" } },
+        { "name": "Admin Delete Category", "request": { "method": "DELETE", "url": "{{base_url}}/categories/:category_id" } }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        { "name": "List Reports", "request": { "method": "GET", "url": "{{base_url}}/reports" } },
+        { "name": "Create Report", "request": { "method": "POST", "url": "{{base_url}}/reports" } },
+        { "name": "Show Report", "request": { "method": "GET", "url": "{{base_url}}/reports/{{report_id}}" } },
+        { "name": "Update Report", "request": { "method": "PUT", "url": "{{base_url}}/reports/{{report_id}}" } },
+        { "name": "Delete Report", "request": { "method": "DELETE", "url": "{{base_url}}/reports/{{report_id}}" } },
+        { "name": "Admin Approve Report", "request": { "method": "PATCH", "url": "{{base_url}}/admin/reports/{{report_id}}/approve" } },
+        { "name": "Admin Reject Report", "request": { "method": "PATCH", "url": "{{base_url}}/admin/reports/{{report_id}}/reject" } }
+      ]
+    },
+    {
+      "name": "Claims",
+      "item": [
+        { "name": "Create Claim", "request": { "method": "POST", "url": "{{base_url}}/claims" } },
+        { "name": "List Claims", "request": { "method": "GET", "url": "{{base_url}}/claims" } },
+        { "name": "Show Claim", "request": { "method": "GET", "url": "{{base_url}}/claims/{{claim_id}}" } },
+        { "name": "Admin Approve Claim", "request": { "method": "PATCH", "url": "{{base_url}}/admin/claims/{{claim_id}}/approve" } },
+        { "name": "Admin Reject Claim", "request": { "method": "PATCH", "url": "{{base_url}}/admin/claims/{{claim_id}}/reject" } }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        { "name": "List Notifications", "request": { "method": "GET", "url": "{{base_url}}/notifications" } },
+        { "name": "Mark Notification Read", "request": { "method": "PATCH", "url": "{{base_url}}/notifications/{{notification_id}}/read" } }
+      ]
+    }
+  ]
+}
