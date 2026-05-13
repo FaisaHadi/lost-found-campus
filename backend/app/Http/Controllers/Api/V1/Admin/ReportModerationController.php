@@ -23,7 +23,7 @@ class ReportModerationController extends Controller
 
         return $this->successResponse(
             ReportResource::make($report),
-            'Report approved successfully.'
+            'Laporan berhasil disetujui.'
         );
     }
 
@@ -35,7 +35,7 @@ class ReportModerationController extends Controller
 
         return $this->successResponse(
             ReportResource::make($report),
-            'Report rejected successfully.'
+            'Laporan berhasil ditolak.'
         );
     }
 }

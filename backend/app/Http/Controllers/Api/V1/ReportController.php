@@ -25,7 +25,7 @@ class ReportController extends Controller
 
         return $this->paginatedResponse(
             ReportResource::collection($reports),
-            'Reports retrieved successfully.'
+            'Laporan berhasil diambil.'
         );
     }
 
@@ -37,7 +37,7 @@ class ReportController extends Controller
 
         return $this->successResponse(
             ReportResource::make($report),
-            'Report created successfully and is pending moderation.',
+            'Laporan berhasil dibuat dan menunggu moderasi.',
             201
         );
     }
@@ -50,7 +50,7 @@ class ReportController extends Controller
 
         return $this->successResponse(
             ReportResource::make($report),
-            'Report retrieved successfully.'
+            'Laporan berhasil diambil.'
         );
     }
 
@@ -62,7 +62,7 @@ class ReportController extends Controller
 
         return $this->successResponse(
             ReportResource::make($report),
-            'Report updated successfully.'
+            'Laporan berhasil diperbarui.'
         );
     }
 
@@ -72,6 +72,6 @@ class ReportController extends Controller
 
         $this->reportService->delete($report);
 
-        return $this->successResponse([], 'Report deleted successfully.');
+        return $this->successResponse([], 'Laporan berhasil dihapus.');
     }
 }

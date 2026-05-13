@@ -9,19 +9,21 @@ trait ApiResponse
 {
     protected function successResponse(
         mixed $data = [],
-        string $message = 'Request completed successfully.',
+        string $message = 'Permintaan berhasil diproses.',
         int $status = 200
     ): JsonResponse {
         return response()->json([
             'success' => true,
             'message' => $message,
             'data' => $data,
+            'errors' => null,
+            'meta' => [],
         ], $status);
     }
 
     protected function paginatedResponse(
         AnonymousResourceCollection $resourceCollection,
-        string $message = 'Resources retrieved successfully.'
+        string $message = 'Data berhasil diambil.'
     ): JsonResponse {
         $response = $resourceCollection->response()->getData(true);
 
@@ -29,6 +31,7 @@ trait ApiResponse
             'success' => true,
             'message' => $message,
             'data' => $response['data'] ?? [],
+            'errors' => null,
             'meta' => $response['meta'] ?? [],
             'links' => $response['links'] ?? [],
         ]);
@@ -42,10 +45,14 @@ trait ApiResponse
     ): JsonResponse {
         $payload = [
             'success' => false,
+            'message' => $message,
+            'data' => null,
+            'errors' => $details,
             'error' => [
                 'code' => $code,
                 'message' => $message,
             ],
+            'meta' => [],
         ];
 
         if ($details !== null) {

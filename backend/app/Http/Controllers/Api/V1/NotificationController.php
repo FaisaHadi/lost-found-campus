@@ -23,7 +23,7 @@ class NotificationController extends Controller
 
         return $this->paginatedResponse(
             NotificationResource::collection($notifications),
-            'Notifications retrieved successfully.'
+            'Notifikasi berhasil diambil.'
         );
     }
 
@@ -35,7 +35,7 @@ class NotificationController extends Controller
 
         return $this->successResponse(
             NotificationResource::make($notification),
-            'Notification marked as read.'
+            'Notifikasi ditandai sebagai dibaca.'
         );
     }
 }

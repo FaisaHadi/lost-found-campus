@@ -1,14 +1,10 @@
-# Web Admin Platform
+# Platform Admin Web
 
-Phase: 3 - Web Administration Platform
+Phase 3 menambahkan platform administrasi dan moderasi berbasis Laravel Blade di dalam aplikasi backend yang sudah ada. Platform ini memakai sistem autentikasi, model, policy, dan service yang sama dengan API.
 
-The web platform is a Laravel Blade administration and moderation surface built inside the existing Laravel backend application. It uses the shared authentication system, shared models, shared policies, and shared services created during the backend phases.
+## Arsitektur
 
-## Architecture
-
-The web platform follows the existing layered backend architecture.
-
-Request flow:
+Alur request web:
 
 ```text
 Blade route
@@ -20,32 +16,30 @@ Blade route
 -> Blade response
 ```
 
-Key directories:
+Direktori penting:
 
 | Area | Path |
 | --- | --- |
 | Web routes | `backend/routes/web.php` |
 | Web controllers | `backend/app/Http/Controllers/Web` |
 | Web form requests | `backend/app/Http/Requests/Web/Admin` |
-| Layouts | `backend/resources/views/layouts` |
-| Reusable UI components | `backend/resources/views/components` |
-| Admin pages | `backend/resources/views/admin` |
-| PWA files | `backend/public/manifest.json`, `backend/public/service-worker.js`, `backend/public/offline.html` |
+| Layout | `backend/resources/views/layouts` |
+| Komponen UI reusable | `backend/resources/views/components` |
+| Halaman admin | `backend/resources/views/admin` |
+| File PWA | `backend/public/manifest.json`, `backend/public/service-worker.js`, `backend/public/offline.html` |
 
-The web platform does not duplicate report, claim, notification, image upload, or category business logic. It calls the same services used by the API layer.
+Platform web tidak menggandakan logika laporan, klaim, notifikasi, upload gambar, atau kategori. Semua alur bisnis tetap memakai service yang sama dengan API.
 
-## UI Structure
+## Struktur UI
 
-Primary layout:
+- Sidebar desktop tetap untuk menu admin.
+- Drawer sidebar untuk tablet dan mobile.
+- Topbar sticky dengan dropdown notifikasi.
+- Heading halaman dan slot aksi.
+- State sukses, status, dan error validasi.
+- Area konten responsif dengan card, tabel, form, dan empty state.
 
-- Fixed desktop sidebar for administration sections.
-- Mobile and tablet drawer sidebar for compatibility.
-- Sticky top navigation with notification dropdown.
-- Page heading and action slot.
-- Session success, status, and validation error states.
-- Responsive content area with cards, tables, forms, and empty states.
-
-Reusable Blade components:
+Komponen Blade reusable:
 
 - `x-ui.button`
 - `x-ui.badge`
@@ -55,145 +49,94 @@ Reusable Blade components:
 - `x-admin.sidebar`
 - `x-admin.topbar`
 
-Design system:
+## Autentikasi
 
-- Neutral page background and white working surfaces.
-- Emerald for primary actions.
-- Amber for pending states.
-- Rose for destructive or rejected states.
-- Sky, teal, violet, and gray for secondary status distinction.
-- 8px card radius through `rounded-lg`.
-- Consistent form controls through `.admin-control`.
-- Consistent focus treatment through `.admin-focus`.
-- Tables use compact spacing and horizontal overflow for smaller screens.
+Route:
 
-## Authentication
-
-Routes:
-
-| Method | Route | Purpose |
+| Method | Route | Tujuan |
 | --- | --- | --- |
-| `GET` | `/admin/login` | Admin login page |
-| `POST` | `/admin/login` | Admin session login |
-| `POST` | `/admin/logout` | Admin logout |
-| `GET` | `/admin` | Dashboard |
+| `GET` | `/admin/login` | Halaman login admin |
+| `POST` | `/admin/login` | Masuk session admin |
+| `POST` | `/admin/logout` | Keluar admin |
+| `GET` | `/admin` | Dasbor |
 
-Only users with `role=admin` can access `/admin/*`. Non-admin users cannot sign in to the admin platform.
+Hanya pengguna dengan `role=admin` yang dapat membuka `/admin/*`. Pengguna non-admin tidak dapat masuk ke platform admin.
 
-The shared role middleware supports both:
+## Dasbor
 
-- JSON API responses for `/api/*`
-- Browser redirects or `403` pages for web routes
+Kartu dasbor menampilkan:
 
-## Dashboard
+- Total laporan
+- Laporan menunggu
+- Klaim menunggu
+- Laporan disetujui
+- Jumlah kategori
+- Jumlah pengguna terdaftar
+- Distribusi status laporan
 
-Dashboard cards show:
+Bagian aktivitas menampilkan laporan terbaru, klaim terbaru, dan notifikasi belum dibaca.
 
-- Total reports
-- Pending reports
-- Pending claims
-- Approved reports
-- Category count
-- Registered user count
-- Report status distribution
+## Workflow Moderasi
 
-Dashboard activity sections show:
+Moderasi laporan:
 
-- Recent reports
-- Recent claims
-- Unread notifications
+1. Admin membuka `Manajemen Laporan`.
+2. Admin memfilter berdasarkan keyword, kategori, jenis, status, atau status moderasi.
+3. Admin membuka detail laporan.
+4. Admin menyetujui, menolak, atau mengedit metadata/status laporan.
+5. Pemilik laporan menerima notifikasi saat laporan disetujui atau ditolak.
 
-The dashboard is designed for moderation triage: pending work is visible immediately, with direct links into report and claim detail pages.
+Moderasi klaim:
 
-## Moderation Workflow
+1. Admin membuka `Manajemen Klaim`.
+2. Admin membaca bukti kepemilikan.
+3. Admin menyetujui atau menolak klaim.
+4. Klaim yang disetujui menandai laporan sebagai `claimed`.
+5. Klaim pending lain ditolak oleh service backend.
+6. Pengaju klaim menerima notifikasi.
 
-Report moderation:
+Manajemen kategori:
 
-1. Admin opens `Report Management`.
-2. Admin filters by keyword, category, type, status, or moderation status.
-3. Admin opens a report detail page.
-4. Admin approves, rejects, or edits report metadata/status.
-5. Report owner receives a notification when approval or rejection occurs.
+1. Admin membuat, mengedit, mengaktifkan, menonaktifkan, atau menghapus kategori.
+2. Kategori dipakai bersama oleh API client dan platform web.
 
-Claim moderation:
+Notifikasi:
 
-1. Admin opens `Claim Management`.
-2. Admin reviews ownership proof.
-3. Admin approves or rejects the claim.
-4. Approved claims mark the report as `claimed`.
-5. Competing pending claims are rejected by the backend service.
-6. Claimants receive notifications.
+1. Admin membuka dropdown atau daftar notifikasi.
+2. Admin meninjau pesan belum dibaca atau sudah dibaca.
+3. Admin menandai notifikasi sebagai dibaca.
 
-Category management:
+## Fitur Khusus Web
 
-1. Admin creates, edits, activates, deactivates, or deletes categories.
-2. Categories remain shared across API clients and the web platform.
+### Upload Drag and Drop
 
-Notification workflow:
+Diimplementasikan pada form edit detail laporan.
 
-1. Admin opens the dropdown or notification list.
-2. Admin reviews unread/read messages.
-3. Admin marks unread notifications as read.
+Kemampuan:
 
-## Web-Specific Features
+- Drag gambar ke area upload.
+- Klik untuk memilih file.
+- Pratinjau gambar sebelum submit.
+- Validasi browser untuk JPG, PNG, WEBP.
+- Validasi ukuran maksimal 4 MB.
+- Error file tampil inline.
+- Validasi server tetap menjadi sumber kebenaran.
+- Pembersihan gambar lama tetap ditangani `ImageStorageService`.
 
-### Drag and Drop Upload
+### Fondasi PWA
 
-Implemented on report detail edit forms.
-
-Capabilities:
-
-- Drag image onto the upload zone.
-- Click to browse.
-- Preview selected image before submit.
-- Validate type in browser: JPG, PNG, WEBP.
-- Validate max size in browser: 4 MB.
-- Show inline file errors.
-- Server-side validation remains authoritative.
-- Existing image cleanup remains handled by `ImageStorageService`.
-
-### PWA Foundation
-
-Implemented files:
+File yang diimplementasikan:
 
 - `public/manifest.json`
 - `public/service-worker.js`
 - `public/offline.html`
 - `public/pwa/icon.svg`
 
-Behavior:
+PWA menyediakan installability dan fallback offline kecil. Aksi moderasi tetap membutuhkan akses backend aktif.
 
-- App can be installed by browsers that support manifest-based installation.
-- Service worker caches the offline fallback and icon.
-- Navigation requests show `offline.html` when the network is unavailable.
-- The offline layer is intentionally small. Moderation still requires live backend access.
+## Perintah
 
-## Responsive Strategy
-
-The platform is admin-first, not mobile-first.
-
-Desktop:
-
-- Persistent sidebar.
-- Sticky topbar.
-- Dense tables.
-- Multi-column dashboard and detail layouts.
-
-Tablet:
-
-- Drawer sidebar.
-- Tables keep horizontal overflow.
-- Cards collapse to fewer columns.
-
-Mobile browser:
-
-- Drawer navigation.
-- Forms stack vertically.
-- Tables remain horizontally scrollable to preserve admin data density.
-
-## Commands
-
-Run from `backend/`.
+Jalankan dari `backend/`.
 
 ```bash
 composer install
@@ -205,54 +148,31 @@ php artisan test
 php artisan serve
 ```
 
-Open:
+Buka:
 
 ```text
 http://127.0.0.1:8000/admin/login
 ```
 
-Seeded admin account:
+Akun admin seed:
 
 ```text
 admin@example.com
 password123
 ```
 
-## Testing Checklist
+## Checklist Pengujian
 
-- Admin can log in.
-- Non-admin users cannot log in to `/admin`.
-- Admin can log out.
-- Dashboard loads stats and recent activity.
-- Report filters work by keyword, category, type, and status.
-- Report detail loads report metadata, image, and claims.
-- Admin can approve reports.
-- Admin can reject reports.
-- Admin can change report status from the report detail form.
-- Drag and drop upload previews valid images.
-- Drag and drop upload rejects invalid image types.
-- Drag and drop upload rejects files above 4 MB.
-- Server stores uploaded images in `storage/app/public/reports`.
-- Server removes replaced or deleted report images.
-- Claim list filters by status, report id, and claimant id.
-- Admin can approve claims.
-- Admin can reject claims.
-- Category create, edit, and delete flows work.
-- Notification dropdown shows recent notifications.
-- Notification list filters unread/read status.
-- Admin can mark notifications as read.
-- `/manifest.json`, `/service-worker.js`, and `/offline.html` are present.
-- Browser install prompt is available where supported.
-- Offline navigation shows the fallback page.
-- Pages remain usable at desktop, tablet, and mobile browser widths.
-
-## Debugging Checklist
-
-- If Blade assets fail, run `npm install` and `npm run build`.
-- If uploaded images do not display, run `php artisan storage:link`.
-- If admin login redirects unexpectedly, confirm the user role is `admin`.
-- If moderation actions fail, confirm policies and role middleware are active.
-- If validation errors appear, inspect the relevant form request in `app/Http/Requests/Web/Admin`.
-- If PWA changes do not appear, unregister the old service worker in browser devtools and reload.
-- If pagination links lose filters, verify controllers pass paginated query strings from the repository layer.
-- If API and web status behavior diverges, update the shared service rather than controller-specific logic.
+- Admin dapat login dan logout.
+- Non-admin tidak dapat masuk ke `/admin`.
+- Dasbor memuat statistik dan aktivitas terbaru.
+- Filter laporan bekerja berdasarkan keyword, kategori, jenis, dan status.
+- Detail laporan memuat metadata, gambar, dan klaim.
+- Admin dapat menyetujui dan menolak laporan.
+- Upload drag and drop menampilkan pratinjau gambar valid.
+- File tidak valid dan file lebih dari 4 MB ditolak.
+- Admin dapat menyetujui dan menolak klaim.
+- CRUD kategori bekerja.
+- Dropdown dan daftar notifikasi bekerja.
+- PWA manifest, service worker, dan offline page tersedia.
+- Halaman tetap dapat dipakai di desktop, tablet, dan mobile browser.

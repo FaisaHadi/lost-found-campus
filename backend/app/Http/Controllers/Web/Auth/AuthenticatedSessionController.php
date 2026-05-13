@@ -23,7 +23,7 @@ class AuthenticatedSessionController extends Controller
 
         if (! Auth::attempt($credentials, $remember)) {
             throw ValidationException::withMessages([
-                'email' => 'The provided credentials are invalid.',
+                'email' => 'Email atau kata sandi tidak valid.',
             ]);
         }
 
@@ -35,7 +35,7 @@ class AuthenticatedSessionController extends Controller
             $request->session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'email' => 'This account does not have administrator access.',
+                'email' => 'Akun ini tidak memiliki akses administrator.',
             ]);
         }
 
@@ -48,6 +48,6 @@ class AuthenticatedSessionController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        return redirect()->route('admin.login')->with('status', 'You have been signed out.');
+        return redirect()->route('admin.login')->with('status', 'Anda telah keluar.');
     }
 }

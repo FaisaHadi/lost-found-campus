@@ -42,7 +42,7 @@ class ClaimController extends Controller
 
         $this->claimService->approve($claim, request()->user());
 
-        return back()->with('success', 'Claim approved, report status updated, and claimant notified.');
+        return back()->with('success', 'Klaim disetujui, status laporan diperbarui, dan pengaju diberi notifikasi.');
     }
 
     public function reject(Claim $claim): RedirectResponse
@@ -51,6 +51,6 @@ class ClaimController extends Controller
 
         $this->claimService->reject($claim, request()->user());
 
-        return back()->with('success', 'Claim rejected and claimant notified.');
+        return back()->with('success', 'Klaim ditolak dan pengaju diberi notifikasi.');
     }
 }

@@ -1,8 +1,8 @@
-# Phase 2 Testing and Validation
+# Pengujian dan Validasi Fase 2
 
-## Migration and Setup Commands
+## Perintah Migrasi dan Setup
 
-Run from `backend/`.
+Jalankan dari `backend/`.
 
 ```bash
 composer install
@@ -12,94 +12,95 @@ php artisan route:list --path=api/v1
 php artisan test
 ```
 
-Seeded accounts:
+Akun seed:
 
-| Role | Email | Password |
+| Peran | Email | Kata Sandi |
 | --- | --- | --- |
 | Admin | `admin@example.com` | `password123` |
-| User | `test@example.com` | `password123` |
+| Pengguna | `test@example.com` | `password123` |
+| Pengklaim | `claimant@example.com` | `password123` |
 
-Seeded categories:
+Kategori seed:
 
-- Electronics
-- Documents
-- Bags
-- Keys
-- Clothing
+- Elektronik
+- Dokumen
+- Tas
+- Kunci
+- Pakaian
 
-## API Testing Flow
+## Alur Pengujian API
 
-1. Register or log in a user with `/api/v1/auth/login`.
-2. Log in as admin with `admin@example.com`.
-3. List categories with `GET /api/v1/categories`.
-4. Create a report as a user with `POST /api/v1/reports`.
-5. Approve or reject the report as admin.
-6. Confirm the report owner receives a notification.
-7. Create a second user and submit a claim against the approved report.
-8. Approve or reject the claim as admin.
-9. Confirm claim approval changes the report status to `claimed`.
-10. Confirm the claimant receives a notification.
-11. Mark the notification as read.
-12. Test filters on reports and claims.
+1. Registrasi atau masuk pengguna dengan `/api/v1/auth/login`.
+2. Masuk sebagai admin dengan `admin@example.com`.
+3. Lihat kategori dengan `GET /api/v1/categories`.
+4. Buat laporan sebagai pengguna dengan `POST /api/v1/reports`.
+5. Setujui atau tolak laporan sebagai admin.
+6. Pastikan pemilik laporan menerima notifikasi.
+7. Buat pengguna kedua dan ajukan klaim pada laporan yang disetujui.
+8. Setujui atau tolak klaim sebagai admin.
+9. Pastikan persetujuan klaim mengubah status laporan menjadi `claimed`.
+10. Pastikan pengaju klaim menerima notifikasi.
+11. Tandai notifikasi sebagai dibaca.
+12. Uji filter laporan dan klaim.
 
-## Postman Collection Structure
+## Struktur Collection Postman
 
-Recommended variables:
+Variable yang disarankan:
 
-| Variable | Example |
+| Variable | Contoh |
 | --- | --- |
 | `base_url` | `http://localhost:8000/api/v1` |
-| `user_token` | Bearer token from normal login |
-| `admin_token` | Bearer token from admin login |
-| `report_id` | Created report id |
-| `claim_id` | Created claim id |
-| `notification_id` | Created notification id |
+| `user_token` | Bearer token dari login user |
+| `admin_token` | Bearer token dari login admin |
+| `report_id` | ID laporan yang dibuat |
+| `claim_id` | ID klaim yang dibuat |
+| `notification_id` | ID notifikasi yang dibuat |
 
-Folders:
+Folder:
 
-- Auth
-  - Register
-  - Login User
-  - Login Admin
+- Autentikasi
+  - Registrasi
+  - Masuk Pengguna
+  - Masuk Admin
   - Me
-  - Logout
-- Categories
-  - List Categories
-  - Admin Create Category
-  - Admin Update Category
-  - Admin Delete Category
-- Reports
-  - List Reports
-  - Create Report
-  - Show Report
-  - Update Report
-  - Delete Report
-  - Admin Approve Report
-  - Admin Reject Report
-- Claims
-  - Create Claim
-  - List Claims
-  - Show Claim
-  - Admin Approve Claim
-  - Admin Reject Claim
-- Notifications
-  - List Notifications
-  - Mark Notification Read
+  - Keluar
+- Kategori
+  - Daftar Kategori
+  - Admin Membuat Kategori
+  - Admin Memperbarui Kategori
+  - Admin Menghapus Kategori
+- Laporan
+  - Daftar Laporan
+  - Buat Laporan
+  - Detail Laporan
+  - Perbarui Laporan
+  - Hapus Laporan
+  - Admin Menyetujui Laporan
+  - Admin Menolak Laporan
+- Klaim
+  - Buat Klaim
+  - Daftar Klaim
+  - Detail Klaim
+  - Admin Menyetujui Klaim
+  - Admin Menolak Klaim
+- Notifikasi
+  - Daftar Notifikasi
+  - Tandai Notifikasi Dibaca
 
-## Validation Checklist
+## Checklist Validasi
 
-- Authenticated endpoints reject missing tokens with `UNAUTHENTICATED`.
-- Non-admin category mutations return `FORBIDDEN`.
-- Non-owners cannot update or delete another user's report.
-- Users cannot claim their own report.
-- Claims require at least 20 characters of ownership proof.
-- Pending or rejected reports cannot be claimed.
-- Report image validation accepts `jpg`, `jpeg`, `png`, and `webp` up to 4 MB.
-- Report image replacement deletes the previous stored file.
-- Report deletion deletes the stored image file.
-- Admin report approval creates an unread notification for the owner.
-- Admin report rejection creates an unread notification for the owner.
-- Admin claim approval creates an unread notification for the claimant.
-- Admin claim rejection creates an unread notification for the claimant.
-- Users cannot mark another user's notification as read.
-- Report filters work for keyword, category, type, status, and pagination.
+- Endpoint yang perlu autentikasi menolak token kosong dengan `UNAUTHENTICATED`.
+- Mutasi kategori oleh non-admin mengembalikan `FORBIDDEN`.
+- Non-pemilik tidak dapat memperbarui atau menghapus laporan pengguna lain.
+- Pengguna tidak dapat mengklaim laporannya sendiri.
+- Klaim wajib memiliki bukti kepemilikan minimal 20 karakter.
+- Laporan `pending` atau `rejected` tidak dapat diklaim.
+- Validasi gambar menerima `jpg`, `jpeg`, `png`, dan `webp` maksimal 4 MB.
+- Penggantian gambar laporan menghapus file lama.
+- Penghapusan laporan menghapus file gambar yang tersimpan.
+- Persetujuan laporan admin membuat notifikasi belum dibaca untuk pemilik.
+- Penolakan laporan admin membuat notifikasi belum dibaca untuk pemilik.
+- Persetujuan klaim admin membuat notifikasi belum dibaca untuk pengaju klaim.
+- Penolakan klaim admin membuat notifikasi belum dibaca untuk pengaju klaim.
+- Pengguna tidak dapat menandai notifikasi pengguna lain sebagai dibaca.
+- Filter laporan berfungsi untuk keyword, kategori, jenis, status, dan pagination.

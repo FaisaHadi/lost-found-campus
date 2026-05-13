@@ -1,62 +1,62 @@
-# Reports API Contract
+# Kontrak API Laporan
 
-Base path: `/api/v1`
+Path dasar: `/api/v1`
 
-## Standard JSON Format
+## Format JSON Standar
 
 ```json
 {
   "success": true,
-  "message": "Request completed successfully.",
+  "message": "Permintaan berhasil diproses.",
   "data": {},
   "errors": null,
   "meta": {}
 }
 ```
 
-## Auth Requirement Placeholder
+## Kebutuhan Autentikasi
 
-Report endpoints are expected to require Laravel Sanctum authentication unless explicitly marked public in a later phase.
+Endpoint laporan menggunakan autentikasi Laravel Sanctum, kecuali ada endpoint yang secara eksplisit dibuat publik pada fase berikutnya.
 
 ```http
 Authorization: Bearer <token>
 ```
 
-## Endpoint Table
+## Tabel Endpoint
 
-| Method | Endpoint | Description | Auth Required |
+| Method | Endpoint | Deskripsi | Autentikasi Wajib |
 | --- | --- | --- | --- |
-| GET | `/api/v1/reports` | List lost and found reports | Yes |
-| POST | `/api/v1/reports` | Create a lost or found item report | Yes |
-| GET | `/api/v1/reports/{report}` | Show report detail | Yes |
-| PUT | `/api/v1/reports/{report}` | Update report detail | Yes |
-| DELETE | `/api/v1/reports/{report}` | Delete or archive report | Yes |
+| GET | `/api/v1/reports` | Menampilkan daftar laporan hilang dan ditemukan | Ya |
+| POST | `/api/v1/reports` | Membuat laporan barang hilang atau ditemukan | Ya |
+| GET | `/api/v1/reports/{report}` | Menampilkan detail laporan | Ya |
+| PUT | `/api/v1/reports/{report}` | Memperbarui detail laporan | Ya |
+| DELETE | `/api/v1/reports/{report}` | Menghapus atau mengarsipkan laporan | Ya |
 
-## Request Example
+## Contoh Permintaan
 
 ```json
 {
   "type": "lost",
-  "title": "Black Backpack",
-  "description": "Black backpack with campus notebook inside.",
-  "location_name": "Main Library",
+  "title": "Ransel Hitam",
+  "description": "Ransel hitam berisi buku catatan kampus.",
+  "location_name": "Perpustakaan Utama",
   "latitude": -6.200000,
   "longitude": 106.816666,
   "reported_at": "2026-05-13T09:00:00Z"
 }
 ```
 
-## Response Example
+## Contoh Respons
 
 ```json
 {
   "success": true,
-  "message": "Report created successfully.",
+  "message": "Laporan berhasil dibuat.",
   "data": {
     "report": {
       "id": 1,
       "type": "lost",
-      "title": "Black Backpack",
+      "title": "Ransel Hitam",
       "status": "open"
     }
   },
@@ -65,22 +65,21 @@ Authorization: Bearer <token>
 }
 ```
 
-## Error Response Example
+## Contoh Error
 
 ```json
 {
   "success": false,
-  "message": "Validation failed.",
+  "message": "Validasi gagal.",
   "data": null,
   "errors": {
     "title": [
-      "The title field is required."
+      "Judul wajib diisi."
     ],
     "type": [
-      "The selected type is invalid."
+      "Jenis yang dipilih tidak valid."
     ]
   },
   "meta": {}
 }
 ```
-

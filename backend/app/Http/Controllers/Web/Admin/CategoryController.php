@@ -40,7 +40,7 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.edit', $category)
-            ->with('success', 'Category created successfully.');
+            ->with('success', 'Kategori berhasil dibuat.');
     }
 
     public function edit(Category $category): View
@@ -56,7 +56,7 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.edit', $category)
-            ->with('success', 'Category updated successfully.');
+            ->with('success', 'Kategori berhasil diperbarui.');
     }
 
     public function destroy(Category $category): RedirectResponse
@@ -65,6 +65,6 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully.');
+            ->with('success', 'Kategori berhasil dihapus.');
     }
 }

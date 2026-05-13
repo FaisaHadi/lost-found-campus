@@ -25,7 +25,32 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (ValidationException $exception, Request $request) {
+        $apiError = function (
+            string $code,
+            string $message,
+            int $status,
+            ?array $errors = null
+        ) {
+            $payload = [
+                'success' => false,
+                'message' => $message,
+                'data' => null,
+                'errors' => $errors,
+                'error' => [
+                    'code' => $code,
+                    'message' => $message,
+                ],
+                'meta' => [],
+            ];
+
+            if ($errors !== null) {
+                $payload['error']['details'] = $errors;
+            }
+
+            return response()->json($payload, $status);
+        };
+
+        $exceptions->render(function (ValidationException $exception, Request $request) use ($apiError) {
             if (! $request->is('api/*')) {
                 return null;
             }
@@ -33,73 +58,42 @@ return Application::configure(basePath: dirname(__DIR__))
             $message = collect($exception->errors())->flatten()->first()
                 ?? 'The submitted data is invalid.';
 
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'VALIDATION_ERROR',
-                    'message' => $message,
-                    'details' => $exception->errors(),
-                ],
-            ], 422);
+            return $apiError('VALIDATION_ERROR', $message, 422, $exception->errors());
         });
 
-        $exceptions->render(function (AuthenticationException $exception, Request $request) {
+        $exceptions->render(function (AuthenticationException $exception, Request $request) use ($apiError) {
             if (! $request->is('api/*')) {
                 return null;
             }
 
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'UNAUTHENTICATED',
-                    'message' => 'Authentication token is missing or invalid.',
-                ],
-            ], 401);
+            return $apiError('UNAUTHENTICATED', 'Authentication token is missing or invalid.', 401);
         });
 
-        $exceptions->render(function (AuthorizationException $exception, Request $request) {
+        $exceptions->render(function (AuthorizationException $exception, Request $request) use ($apiError) {
             if (! $request->is('api/*')) {
                 return null;
             }
 
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'FORBIDDEN',
-                    'message' => 'You are not allowed to perform this action.',
-                ],
-            ], 403);
+            return $apiError('FORBIDDEN', 'You are not allowed to perform this action.', 403);
         });
 
-        $exceptions->render(function (NotFoundHttpException $exception, Request $request) {
+        $exceptions->render(function (NotFoundHttpException $exception, Request $request) use ($apiError) {
             if (! $request->is('api/*')) {
                 return null;
             }
 
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'NOT_FOUND',
-                    'message' => 'The requested API resource was not found.',
-                ],
-            ], 404);
+            return $apiError('NOT_FOUND', 'The requested API resource was not found.', 404);
         });
 
-        $exceptions->render(function (ModelNotFoundException $exception, Request $request) {
+        $exceptions->render(function (ModelNotFoundException $exception, Request $request) use ($apiError) {
             if (! $request->is('api/*')) {
                 return null;
             }
 
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'NOT_FOUND',
-                    'message' => 'The requested resource was not found.',
-                ],
-            ], 404);
+            return $apiError('NOT_FOUND', 'The requested resource was not found.', 404);
         });
 
-        $exceptions->render(function (HttpExceptionInterface $exception, Request $request) {
+        $exceptions->render(function (HttpExceptionInterface $exception, Request $request) use ($apiError) {
             if (! $request->is('api/*')) {
                 return null;
             }
@@ -107,25 +101,17 @@ return Application::configure(basePath: dirname(__DIR__))
             $status = $exception->getStatusCode();
 
             if ($status === 403) {
-                return response()->json([
-                    'success' => false,
-                    'error' => [
-                        'code' => 'FORBIDDEN',
-                        'message' => 'You are not allowed to perform this action.',
-                    ],
-                ], 403);
+                return $apiError('FORBIDDEN', 'You are not allowed to perform this action.', 403);
             }
 
             if (in_array($status, [401, 404, 422], true)) {
                 return null;
             }
 
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'HTTP_ERROR',
-                    'message' => $exception->getMessage() ?: 'The request could not be completed.',
-                ],
-            ], $status);
+            return $apiError(
+                'HTTP_ERROR',
+                $exception->getMessage() ?: 'The request could not be completed.',
+                $status
+            );
         });
     })->create();

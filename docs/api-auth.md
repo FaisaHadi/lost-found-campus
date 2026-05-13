@@ -1,18 +1,18 @@
-# Auth API Documentation
+# Dokumentasi API Autentikasi
 
-Backend directory:
+Direktori backend:
 
 ```text
 D:\PABP\lost-found-campus\backend
 ```
 
-Base URL for local development:
+URL dasar untuk development lokal:
 
 ```text
 http://localhost:8000/api/v1
 ```
 
-Authentication uses Laravel Sanctum bearer tokens. API clients must send the token in the `Authorization` header for protected endpoints.
+Autentikasi memakai token bearer Laravel Sanctum. Client API wajib mengirim token pada header `Authorization` untuk endpoint yang dilindungi.
 
 ```http
 Authorization: Bearer <token>
@@ -20,14 +20,14 @@ Accept: application/json
 Content-Type: application/json
 ```
 
-## Standard Responses
+## Respons Standar
 
-Success:
+Sukses:
 
 ```json
 {
   "success": true,
-  "message": "Request completed successfully.",
+  "message": "Permintaan berhasil diproses.",
   "data": {}
 }
 ```
@@ -37,49 +37,55 @@ Error:
 ```json
 {
   "success": false,
+  "message": "Pesan error.",
+  "data": null,
+  "errors": null,
   "error": {
     "code": "ERROR_CODE",
-    "message": "Error message."
-  }
+    "message": "Pesan error."
+  },
+  "meta": {}
 }
 ```
 
-## Endpoints
+Error validasi memakai envelope yang sama dan menaruh pesan per field di `errors`. Field `error.details` tetap disediakan agar client lama yang membaca `error.code` masih kompatibel.
 
-| Method | Endpoint | Auth | Description |
+## Endpoint
+
+| Method | Endpoint | Autentikasi | Deskripsi |
 | --- | --- | --- | --- |
-| POST | `/api/v1/auth/register` | Public | Register user and issue API token |
-| POST | `/api/v1/auth/login` | Public | Authenticate user and issue API token |
-| POST | `/api/v1/auth/logout` | Bearer token | Revoke current API token |
-| GET | `/api/v1/auth/me` | Bearer token | Return authenticated user |
+| POST | `/api/v1/auth/register` | Publik | Mendaftarkan pengguna dan membuat token API |
+| POST | `/api/v1/auth/login` | Publik | Mengautentikasi pengguna dan membuat token API |
+| POST | `/api/v1/auth/logout` | Bearer token | Mencabut token API saat ini |
+| GET | `/api/v1/auth/me` | Bearer token | Mengambil data pengguna yang sedang masuk |
 
-## Register
+## Registrasi
 
 ```http
 POST /api/v1/auth/register
 ```
 
-Request:
+Permintaan:
 
 ```json
 {
-  "name": "Student User",
+  "name": "Pengguna Mahasiswa",
   "email": "student@example.com",
   "password": "password123",
   "password_confirmation": "password123"
 }
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Registration completed successfully.",
+  "message": "Registrasi berhasil.",
   "data": {
     "user": {
       "id": 1,
-      "name": "Student User",
+      "name": "Pengguna Mahasiswa",
       "email": "student@example.com",
       "role": "user"
     },
@@ -89,13 +95,13 @@ Response:
 }
 ```
 
-## Login
+## Masuk
 
 ```http
 POST /api/v1/auth/login
 ```
 
-Request:
+Permintaan:
 
 ```json
 {
@@ -104,16 +110,16 @@ Request:
 }
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Login completed successfully.",
+  "message": "Masuk berhasil.",
   "data": {
     "user": {
       "id": 1,
-      "name": "Student User",
+      "name": "Pengguna Mahasiswa",
       "email": "student@example.com",
       "role": "user"
     },
@@ -123,15 +129,28 @@ Response:
 }
 ```
 
-Invalid credentials:
+Kredensial tidak valid:
 
 ```json
 {
   "success": false,
+  "message": "Email atau kata sandi tidak valid.",
+  "data": null,
+  "errors": {
+    "email": [
+      "Email atau kata sandi tidak valid."
+    ]
+  },
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "The provided credentials are invalid."
-  }
+    "message": "Email atau kata sandi tidak valid.",
+    "details": {
+      "email": [
+        "Email atau kata sandi tidak valid."
+      ]
+    }
+  },
+  "meta": {}
 }
 ```
 
@@ -141,22 +160,22 @@ Invalid credentials:
 GET /api/v1/auth/me
 ```
 
-Headers:
+Header:
 
 ```http
 Authorization: Bearer <token>
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Authenticated user retrieved successfully.",
+  "message": "Data pengguna yang masuk berhasil diambil.",
   "data": {
     "user": {
       "id": 1,
-      "name": "Student User",
+      "name": "Pengguna Mahasiswa",
       "email": "student@example.com",
       "role": "user"
     }
@@ -164,43 +183,47 @@ Response:
 }
 ```
 
-## Logout
+## Keluar
 
 ```http
 POST /api/v1/auth/logout
 ```
 
-Headers:
+Header:
 
 ```http
 Authorization: Bearer <token>
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Logout completed successfully.",
+  "message": "Keluar berhasil.",
   "data": []
 }
 ```
 
-Unauthenticated response:
+Respons tidak terautentikasi:
 
 ```json
 {
   "success": false,
+  "message": "Token autentikasi tidak ada atau tidak valid.",
+  "data": null,
+  "errors": null,
   "error": {
     "code": "UNAUTHENTICATED",
-    "message": "Authentication token is missing or invalid."
-  }
+    "message": "Token autentikasi tidak ada atau tidak valid."
+  },
+  "meta": {}
 }
 ```
 
-## Migration Commands
+## Perintah Migrasi
 
-Run from the backend directory:
+Jalankan dari direktori backend:
 
 ```powershell
 cd D:\PABP\lost-found-campus\backend
@@ -208,13 +231,13 @@ mysql -u root -e "CREATE DATABASE IF NOT EXISTS lost_found_campus CHARACTER SET 
 php artisan migrate
 ```
 
-For a clean local rebuild during development:
+Untuk membangun ulang database lokal saat development:
 
 ```powershell
 php artisan migrate:fresh
 ```
 
-## Artisan Validation Commands
+## Perintah Validasi Artisan
 
 ```powershell
 php artisan config:clear
@@ -222,18 +245,18 @@ php artisan route:list --path=api/v1
 php artisan test
 ```
 
-Optional local API server:
+Server API lokal opsional:
 
 ```powershell
 php artisan serve
 ```
 
-## Postman Testing Flow
+## Alur Pengujian Postman
 
-1. Create an environment with `base_url` set to `http://localhost:8000`.
-2. Send `POST {{base_url}}/api/v1/auth/register`.
-3. Copy `data.token` from the response.
-4. Set an environment variable named `token`.
-5. Send `GET {{base_url}}/api/v1/auth/me` with `Authorization: Bearer {{token}}`.
-6. Send `POST {{base_url}}/api/v1/auth/logout` with the same bearer token.
-7. Send `GET {{base_url}}/api/v1/auth/me` again and confirm it returns `UNAUTHENTICATED`.
+1. Buat environment dengan `base_url` bernilai `http://localhost:8000`.
+2. Kirim `POST {{base_url}}/api/v1/auth/register`.
+3. Salin `data.token` dari respons.
+4. Buat environment variable bernama `token`.
+5. Kirim `GET {{base_url}}/api/v1/auth/me` dengan `Authorization: Bearer {{token}}`.
+6. Kirim `POST {{base_url}}/api/v1/auth/logout` dengan bearer token yang sama.
+7. Kirim `GET {{base_url}}/api/v1/auth/me` lagi dan pastikan respons berisi `UNAUTHENTICATED`.

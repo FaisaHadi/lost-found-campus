@@ -1,10 +1,10 @@
 @php
     $items = [
-        ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
-        ['label' => 'Reports', 'route' => 'admin.reports.index', 'active' => 'admin.reports.*'],
-        ['label' => 'Claims', 'route' => 'admin.claims.index', 'active' => 'admin.claims.*'],
-        ['label' => 'Categories', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*'],
-        ['label' => 'Notifications', 'route' => 'admin.notifications.index', 'active' => 'admin.notifications.*'],
+        ['label' => 'Dasbor', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
+        ['label' => 'Laporan', 'route' => 'admin.reports.index', 'active' => 'admin.reports.*'],
+        ['label' => 'Klaim', 'route' => 'admin.claims.index', 'active' => 'admin.claims.*'],
+        ['label' => 'Kategori', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*'],
+        ['label' => 'Notifikasi', 'route' => 'admin.notifications.index', 'active' => 'admin.notifications.*'],
     ];
 @endphp
 
@@ -13,7 +13,7 @@
         <div class="border-b border-gray-200 px-6 py-5">
             <a href="{{ route('admin.dashboard') }}" class="block">
                 <p class="text-sm font-semibold uppercase text-emerald-700">Lost & Found</p>
-                <p class="mt-1 text-lg font-semibold text-gray-950">Campus Admin</p>
+                <p class="mt-1 text-lg font-semibold text-gray-950">Admin Kampus</p>
             </a>
         </div>
 

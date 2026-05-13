@@ -23,7 +23,7 @@ class ClaimModerationController extends Controller
 
         return $this->successResponse(
             ClaimResource::make($claim),
-            'Claim approved successfully.'
+            'Klaim berhasil disetujui.'
         );
     }
 
@@ -35,7 +35,7 @@ class ClaimModerationController extends Controller
 
         return $this->successResponse(
             ClaimResource::make($claim),
-            'Claim rejected successfully.'
+            'Klaim berhasil ditolak.'
         );
     }
 }

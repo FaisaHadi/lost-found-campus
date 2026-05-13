@@ -49,6 +49,12 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Lost Found Campus uses the camera so you can attach a photo to your report.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Lost Found Campus uses your location to help others identify where an item was lost or found.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Lost Found Campus can access your photos if you choose an existing image for a report.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

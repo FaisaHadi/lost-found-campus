@@ -24,7 +24,7 @@ class ClaimController extends Controller
 
         return $this->paginatedResponse(
             ClaimResource::collection($claims),
-            'Claims retrieved successfully.'
+            'Klaim berhasil diambil.'
         );
     }
 
@@ -36,7 +36,7 @@ class ClaimController extends Controller
 
         return $this->successResponse(
             ClaimResource::make($claim),
-            'Claim submitted successfully and is pending admin review.',
+            'Klaim berhasil dikirim dan menunggu tinjauan admin.',
             201
         );
     }
@@ -49,7 +49,7 @@ class ClaimController extends Controller
 
         return $this->successResponse(
             ClaimResource::make($claim),
-            'Claim retrieved successfully.'
+            'Klaim berhasil diambil.'
         );
     }
 }

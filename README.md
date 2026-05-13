@@ -1,105 +1,142 @@
-# Lost & Found Campus Platform
+# Platform Lost & Found Campus
 
-Lost & Found Campus Platform is a production-oriented academic multiplatform engineering project for managing lost and found item reports in a campus environment. The system is designed around a shared Laravel REST API, a Laravel Blade web administration platform, a Flutter mobile application, and one centralized MySQL database.
+Lost & Found Campus adalah project akademik multiplatform untuk mengelola laporan barang hilang dan ditemukan di lingkungan kampus. Sistem ini memakai satu backend Laravel REST API, dashboard admin Laravel Blade, aplikasi mobile Flutter, dan satu database MySQL terpusat.
 
-This repository is initialized for disciplined engineering work. Phase 0 focuses only on foundations: repository structure, documentation, API contract preparation, backend initialization, and mobile initialization. Business features are intentionally not implemented in this phase.
+Implementasi saat ini mencakup backend API, platform admin web, dan aplikasi mobile pengguna. Tahap akhir project berfokus pada stabilisasi, validasi integrasi, dan kesiapan presentasi.
 
-## Architecture Overview
+## Gambaran Arsitektur
 
 ```text
-Client Platforms
-  - Web Administration Platform
-  - Flutter Mobile Application
+Client Platform
+  - Platform Admin Web
+  - Aplikasi Mobile Flutter
 
         |
         v
 
 REST API
   - Laravel 12
-  - Laravel Sanctum Authentication
+  - Autentikasi Laravel Sanctum
 
         |
         v
 
-Application Backend
+Backend Aplikasi
   - Services
   - Repositories
   - Models
   - Policies
-  - Notifications
+  - Notifikasi
 
         |
         v
 
-MySQL Database
+Database MySQL
 ```
 
-The backend is the single source of truth. Web and mobile clients must communicate through the documented REST API and must not bypass backend validation, authorization, or data access rules.
+Backend menjadi sumber data utama. Web dan mobile harus berkomunikasi melalui REST API yang terdokumentasi dan tidak boleh melewati validasi, otorisasi, atau aturan akses data backend.
 
-## Selected Platforms
+## Platform Yang Dipakai
 
-- Web: Laravel Blade with Tailwind CSS
+- Web: Laravel Blade dengan Tailwind CSS
 - Mobile: Flutter
 - Backend API: Laravel 12 REST API
-- Authentication: Laravel Sanctum
+- Autentikasi: Laravel Sanctum
 - Database: MySQL
 
-## Tech Stack
+## Stack Teknologi
 
-- PHP and Laravel 12
+- PHP dan Laravel 12
 - Laravel Sanctum
 - MySQL
-- Blade templates
+- Blade template
 - Tailwind CSS
-- Flutter and Dart
+- Flutter dan Dart
 - Git
-- Markdown-based API contracts
+- Kontrak API berbasis Markdown
 
-## Platform-Specific Features
+## Fitur Per Platform
 
-Mobile features planned for later phases:
+Fitur mobile:
 
-- Camera integration
-- GPS location
+- Integrasi kamera
+- Lokasi GPS
+- Pembuatan laporan, penelusuran laporan, klaim, dan notifikasi
 
-Web features planned for later phases:
+Fitur web:
 
-- Drag and drop upload
-- Progressive Web App support
+- Unggah gambar dengan drag and drop
+- Dukungan Progressive Web App
+- Dasbor admin, moderasi, manajemen kategori, dan pelacakan notifikasi
 
-## Repository Structure
+## Struktur Repository
 
 ```text
 lost-found-campus/
-  backend/       Laravel backend, REST API, and web administration platform
-  mobile/        Flutter mobile application
-  docs/          Engineering rules, roadmap, and project documentation
-  api-contract/  REST API contract foundation
-  ui-design/     UI references and design planning assets
-  README.md      Project overview
+  backend/       Backend Laravel, REST API, dan platform admin web
+  mobile/        Aplikasi mobile Flutter
+  docs/          Aturan engineering, roadmap, dan dokumentasi project
+  api-contract/  Fondasi kontrak REST API
+  ui-design/     Referensi UI dan aset perencanaan desain
+  README.md      Ringkasan project
 ```
 
-## Engineering Workflow
+## Alur Kerja Engineering
 
-Development must follow an API-first, stability-first workflow:
+Pengembangan mengikuti pendekatan API-first dan stability-first:
 
-1. Define or update API contracts before implementing client or backend behavior.
-2. Keep backend logic layered through controllers, services, repositories, models, policies, and notifications.
-3. Keep platform-specific behavior inside the relevant platform folder.
-4. Avoid feature work without a documented scope.
-5. Review changes for maintainability, consistency, and API compatibility before merging.
+1. Definisikan atau perbarui kontrak API sebelum mengubah perilaku client atau backend.
+2. Jaga logika backend tetap berlapis melalui controller, service, repository, model, policy, dan notification.
+3. Simpan perilaku khusus platform di folder platform masing-masing.
+4. Hindari pekerjaan fitur tanpa scope yang terdokumentasi.
+5. Tinjau perubahan dari sisi maintainability, konsistensi, dan kompatibilitas API sebelum digabungkan.
 
-## Setup Placeholder
+## Setup Lokal
 
-Detailed setup instructions will be completed in later phases after the backend and mobile foundations are finalized.
+Backend:
 
-Expected setup areas:
+```bash
+cd backend
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan storage:link
+npm run build
+php artisan serve
+```
 
-- Backend environment configuration
-- MySQL database configuration
-- Laravel Sanctum configuration
-- Web asset build instructions
-- Flutter dependency installation
-- Local development commands
-- Testing commands
+Mobile:
 
+```bash
+cd mobile
+flutter pub get
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+```
+
+Di Windows, aktifkan Developer Mode sebelum menjalankan `flutter pub get` jika dukungan symlink plugin belum aktif.
+
+## Perintah Validasi
+
+```bash
+cd backend
+php artisan test
+npm run build
+
+cd ../mobile
+flutter analyze --no-pub
+flutter test --no-pub
+```
+
+## Dokumen Delivery Akhir
+
+- `docs/final-system-architecture.md`
+- `docs/deployment-guide.md`
+- `docs/academic-presentation-guide.md`
+- `docs/visual-assets.md`
+- `docs/final-submission-checklist.md`
+- `docs/final-engineering-evaluation.md`
+- `docs/future-roadmap.md`
+- `docs/defense-preparation.md`
+- `docs/final-closure-report.md`

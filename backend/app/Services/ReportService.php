@@ -114,8 +114,8 @@ class ReportService
 
         $this->notificationService->createForUser(
             $report->user_id,
-            'Report approved',
-            "Your report \"{$report->title}\" has been approved.",
+            'Laporan disetujui',
+            "Laporan Anda \"{$report->title}\" telah disetujui.",
             $report
         );
 
@@ -131,15 +131,15 @@ class ReportService
             ]);
         });
 
-        $message = "Your report \"{$report->title}\" has been rejected.";
+        $message = "Laporan Anda \"{$report->title}\" telah ditolak.";
 
         if ($reason) {
-            $message .= " Reason: {$reason}";
+            $message .= " Alasan: {$reason}";
         }
 
         $this->notificationService->createForUser(
             $report->user_id,
-            'Report rejected',
+            'Laporan ditolak',
             $message,
             $report
         );
@@ -164,7 +164,7 @@ class ReportService
             ReportStatus::Claimed->value => $this->setClaimed($report),
             ReportStatus::Completed->value => $this->setCompleted($report),
             default => throw ValidationException::withMessages([
-                'status' => ['The selected report status is invalid.'],
+                'status' => ['Status laporan yang dipilih tidak valid.'],
             ]),
         };
     }
@@ -186,7 +186,7 @@ class ReportService
     {
         if ($report->moderation_status !== ModerationStatus::Approved) {
             throw ValidationException::withMessages([
-                'status' => ['Only approved reports can be marked as claimed.'],
+                'status' => ['Hanya laporan yang sudah disetujui yang dapat ditandai sebagai diklaim.'],
             ]);
         }
 
@@ -212,7 +212,7 @@ class ReportService
     {
         if ($report->status !== ReportStatus::Claimed) {
             throw ValidationException::withMessages([
-                'status' => ['Only claimed reports can be marked as completed.'],
+                'status' => ['Hanya laporan yang sudah diklaim yang dapat ditandai sebagai selesai.'],
             ]);
         }
     }

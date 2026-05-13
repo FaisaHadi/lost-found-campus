@@ -1,0 +1,4 @@
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=lost-found-campus
+storeFile=../app/lost-found-campus-release.jks

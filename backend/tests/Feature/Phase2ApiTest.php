@@ -61,7 +61,7 @@ class Phase2ApiTest extends TestCase
         $this->assertDatabaseHas('notifications', [
             'user_id' => $user->id,
             'report_id' => $report->id,
-            'title' => 'Report approved',
+            'title' => 'Laporan disetujui',
             'status' => NotificationStatus::Unread->value,
         ]);
     }
@@ -173,7 +173,7 @@ class Phase2ApiTest extends TestCase
         $this->assertDatabaseHas('notifications', [
             'user_id' => $claimant->id,
             'claim_id' => $claimId,
-            'title' => 'Claim approved',
+            'title' => 'Klaim disetujui',
             'status' => NotificationStatus::Unread->value,
         ]);
     }

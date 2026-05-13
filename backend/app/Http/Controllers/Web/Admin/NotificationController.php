@@ -31,6 +31,6 @@ class NotificationController extends Controller
 
         $this->notificationService->markAsRead($notification);
 
-        return back()->with('success', 'Notification marked as read.');
+        return back()->with('success', 'Notifikasi ditandai sebagai dibaca.');
     }
 }

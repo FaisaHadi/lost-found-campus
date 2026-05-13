@@ -1,89 +1,89 @@
-# Engineering Rules
+# Aturan Engineering
 
-These rules define the engineering discipline for the Lost & Found Campus Platform. The project must remain realistic, maintainable, and aligned with the selected architecture.
+Dokumen ini menetapkan disiplin engineering untuk Platform Lost & Found Campus. Project harus tetap realistis, mudah dipelihara, dan sesuai dengan arsitektur yang sudah dipilih.
 
-## 1. Branch Strategy
+## 1. Strategi Branch
 
-- `main` contains stable, reviewed code only.
-- `develop` contains integrated work prepared for the next stable milestone.
-- `feature/<short-name>` is used for planned feature work.
-- `fix/<short-name>` is used for bug fixes.
-- `docs/<short-name>` is used for documentation-only changes.
-- Branches must have a clear scope and should not mix unrelated work.
+- `main` hanya berisi kode stabil yang sudah ditinjau.
+- `develop` berisi pekerjaan terintegrasi untuk milestone stabil berikutnya.
+- `feature/<short-name>` dipakai untuk pekerjaan fitur.
+- `fix/<short-name>` dipakai untuk perbaikan bug.
+- `docs/<short-name>` dipakai untuk perubahan dokumentasi.
+- Satu branch harus punya scope jelas dan tidak mencampur pekerjaan yang tidak terkait.
 
-## 2. Commit Convention
+## 2. Konvensi Commit
 
-Use Conventional Commit style:
+Gunakan format Conventional Commit:
 
 ```text
-type(scope): short description
+type(scope): deskripsi singkat
 ```
 
-Accepted types:
+Tipe yang dipakai:
 
-- `feat`: new feature
-- `fix`: bug fix
-- `docs`: documentation update
-- `refactor`: code restructuring without behavior change
-- `test`: test addition or update
-- `chore`: maintenance task
-- `style`: formatting-only change
+- `feat`: fitur baru
+- `fix`: perbaikan bug
+- `docs`: pembaruan dokumentasi
+- `refactor`: restrukturisasi kode tanpa perubahan perilaku
+- `test`: penambahan atau pembaruan test
+- `chore`: tugas pemeliharaan
+- `style`: perubahan formatting saja
 
-Examples:
+Contoh:
 
 ```text
 docs(api): add reports contract foundation
 chore(backend): initialize laravel project
 ```
 
-## 3. API Response Standard
+## 3. Standar Respons API
 
-All API responses must use a consistent JSON shape.
+Semua response API memakai bentuk JSON yang konsisten.
 
-Successful response:
+Respons sukses:
 
 ```json
 {
   "success": true,
-  "message": "Request completed successfully.",
+  "message": "Permintaan berhasil diproses.",
   "data": {},
   "errors": null,
   "meta": {}
 }
 ```
 
-Error response:
+Respons error:
 
 ```json
 {
   "success": false,
-  "message": "Request failed.",
+  "message": "Permintaan gagal.",
   "data": null,
   "errors": {
     "field": [
-      "Validation message."
+      "Pesan validasi."
     ]
   },
   "meta": {}
 }
 ```
 
-Controllers must not return inconsistent ad hoc response shapes.
+Controller tidak boleh mengembalikan bentuk response ad hoc yang tidak konsisten.
 
-## 4. Naming Convention
+## 4. Konvensi Penamaan
 
-- Backend classes use PascalCase.
-- Backend methods and variables use camelCase.
-- Database tables use snake_case plural names.
-- Database columns use snake_case.
-- API routes use kebab-case or clear REST resource names.
-- Flutter files and folders use snake_case.
-- Flutter classes use PascalCase.
-- Documentation files use kebab-case.
+- Class backend memakai PascalCase.
+- Method dan variable backend memakai camelCase.
+- Tabel database memakai snake_case jamak.
+- Kolom database memakai snake_case.
+- Route API memakai kebab-case atau nama resource REST yang jelas.
+- File dan folder Flutter memakai snake_case.
+- Class Flutter memakai PascalCase.
+- File dokumentasi memakai kebab-case.
 
-## 5. Folder Structure Policy
+## 5. Kebijakan Struktur Folder
 
-The repository is organized by platform and engineering concern:
+Repository diatur berdasarkan platform dan kebutuhan engineering:
 
 ```text
 backend/
@@ -93,75 +93,74 @@ api-contract/
 ui-design/
 ```
 
-Backend code must follow layered responsibilities:
+Tanggung jawab backend:
 
-- Controllers handle HTTP input and output.
-- Services hold business workflow logic.
-- Repositories handle data access boundaries.
-- Models represent database-backed entities.
-- Policies handle authorization decisions.
-- Notifications handle notification delivery concerns.
+- Controller menangani input dan output HTTP.
+- Service menyimpan alur bisnis.
+- Repository menangani batas akses data.
+- Model mewakili entity database.
+- Policy menangani keputusan otorisasi.
+- Notification menangani pesan sistem.
 
-Flutter code must keep concerns separated:
+Tanggung jawab Flutter:
 
-- `models/` for data models
-- `services/` for API and platform service integration
-- `providers/` for state management
-- `screens/` for screen-level UI
-- `widgets/` for reusable UI components
-- `utils/` for shared helpers
+- `models/` untuk model data.
+- `services/` untuk API dan integrasi layanan platform.
+- `providers/` untuk state management.
+- `screens/` untuk UI level layar.
+- `widgets/` untuk komponen UI reusable.
+- `utils/` untuk helper bersama.
 
-## 6. Engineering Discipline Rules
+## 6. Disiplin Pengembangan
 
-- Do not implement business features without a defined phase scope.
-- Do not introduce microservices.
-- Do not introduce websocket realtime behavior.
-- Do not add AI features.
-- Do not bypass the REST API contract.
-- Do not create giant monolithic files.
-- Prefer clear, boring, maintainable code over clever abstractions.
-- Keep changes small enough to review.
+- Jangan membuat fitur bisnis tanpa scope fase yang jelas.
+- Jangan memperkenalkan microservice.
+- Jangan memperkenalkan websocket realtime.
+- Jangan menambahkan fitur AI.
+- Jangan melewati kontrak REST API.
+- Jangan membuat file monolitik yang terlalu besar.
+- Pilih kode yang jelas, sederhana, dan mudah dirawat.
+- Pastikan perubahan cukup kecil untuk ditinjau.
 
-## 7. Code Review Rules
+## 7. Code Review
 
-Code review must check:
+Review harus memeriksa:
 
-- Scope matches the assigned phase.
-- API contracts and implementation are consistent.
-- Authentication and authorization boundaries are respected.
-- Validation is present where input is accepted.
-- Naming and folder placement follow project conventions.
-- No unrelated refactors are included.
-- Tests or verification notes are included when appropriate.
+- Scope sesuai fase.
+- Kontrak API dan implementasi konsisten.
+- Batas autentikasi dan otorisasi dihormati.
+- Validasi ada di semua input penting.
+- Penamaan dan penempatan folder sesuai aturan.
+- Tidak ada refactor tidak terkait.
+- Test atau catatan verifikasi disertakan bila perlu.
 
-## 8. Scope Control Rules
+## 8. Kontrol Scope
 
-- Phase 0 is foundation only.
-- Feature implementation begins only after contracts and roadmap are agreed.
-- A task must not expand into unrelated modules.
-- Platform-specific features must stay within their platform boundaries.
-- New dependencies require a clear reason and must fit the selected stack.
+- Phase 0 hanya untuk fondasi.
+- Implementasi fitur dimulai setelah kontrak dan roadmap disepakati.
+- Satu task tidak boleh melebar ke modul tidak terkait.
+- Fitur khusus platform harus tetap di batas platformnya.
+- Dependency baru harus punya alasan jelas dan cocok dengan stack.
 
-## 9. API-First Workflow
+## 9. Workflow API-First
 
-The REST API contract is the coordination point between backend, web, and mobile.
+Kontrak REST API menjadi titik koordinasi backend, web, dan mobile.
 
-Required workflow:
+Workflow wajib:
 
-1. Define endpoint behavior in `api-contract/`.
-2. Agree on request and response structures.
-3. Implement backend route, validation, service, repository, and model changes.
-4. Connect web and mobile clients to the documented API.
-5. Keep API changes backward-conscious and documented.
+1. Definisikan perilaku endpoint di `api-contract/`.
+2. Sepakati struktur request dan response.
+3. Implementasikan route, validasi, service, repository, dan model di backend.
+4. Hubungkan web dan mobile ke API terdokumentasi.
+5. Jaga perubahan API tetap sadar kompatibilitas dan terdokumentasi.
 
-## 10. Stability-First Development Principle
+## 10. Prinsip Stability-First
 
-The system should favor stable foundations over premature complexity.
+Sistem mengutamakan fondasi stabil dibanding kompleksitas dini.
 
-- Use Laravel and Flutter standard practices unless the project has a clear reason not to.
-- Centralize shared response formatting.
-- Keep authentication consistent through Sanctum.
-- Keep database access predictable through repositories where useful.
-- Prefer explicit validation and authorization over implicit behavior.
-- Avoid speculative abstractions until repeated patterns prove they are needed.
-
+- Gunakan praktik standar Laravel dan Flutter selama tidak ada alasan kuat untuk menyimpang.
+- Pusatkan format response bersama.
+- Jaga autentikasi konsisten melalui Sanctum.
+- Buat akses database mudah diprediksi melalui repository saat berguna.
+- Gunakan validasi dan otorisasi eksplisit.
+- Hindari abstraksi spekulatif sampai pola berulang benar-benar terbukti.

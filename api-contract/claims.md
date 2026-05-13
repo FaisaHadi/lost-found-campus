@@ -1,52 +1,52 @@
-# Claims API Contract
+# Kontrak API Klaim
 
-Base path: `/api/v1`
+Path dasar: `/api/v1`
 
-## Standard JSON Format
+## Format JSON Standar
 
 ```json
 {
   "success": true,
-  "message": "Request completed successfully.",
+  "message": "Permintaan berhasil diproses.",
   "data": {},
   "errors": null,
   "meta": {}
 }
 ```
 
-## Auth Requirement Placeholder
+## Kebutuhan Autentikasi
 
-Claim endpoints are expected to require Laravel Sanctum authentication.
+Endpoint klaim memerlukan autentikasi Laravel Sanctum.
 
 ```http
 Authorization: Bearer <token>
 ```
 
-## Endpoint Table
+## Tabel Endpoint
 
-| Method | Endpoint | Description | Auth Required |
+| Method | Endpoint | Deskripsi | Autentikasi Wajib |
 | --- | --- | --- | --- |
-| GET | `/api/v1/claims` | List submitted claims | Yes |
-| POST | `/api/v1/reports/{report}/claims` | Submit a claim for a report | Yes |
-| GET | `/api/v1/claims/{claim}` | Show claim detail | Yes |
-| PUT | `/api/v1/claims/{claim}` | Update claim information | Yes |
-| POST | `/api/v1/claims/{claim}/review` | Review claim status | Yes |
+| GET | `/api/v1/claims` | Menampilkan daftar klaim yang dikirim | Ya |
+| POST | `/api/v1/reports/{report}/claims` | Mengajukan klaim untuk sebuah laporan | Ya |
+| GET | `/api/v1/claims/{claim}` | Menampilkan detail klaim | Ya |
+| PUT | `/api/v1/claims/{claim}` | Memperbarui informasi klaim | Ya |
+| POST | `/api/v1/claims/{claim}/review` | Meninjau status klaim | Ya |
 
-## Request Example
+## Contoh Permintaan
 
 ```json
 {
-  "claim_message": "This item belongs to me. I can describe the contents.",
-  "proof_description": "The backpack contains a blue notebook and student card."
+  "claim_message": "Barang ini milik saya dan saya bisa menjelaskan isinya.",
+  "proof_description": "Ransel berisi buku catatan biru dan kartu mahasiswa."
 }
 ```
 
-## Response Example
+## Contoh Respons
 
 ```json
 {
   "success": true,
-  "message": "Claim submitted successfully.",
+  "message": "Klaim berhasil dikirim.",
   "data": {
     "claim": {
       "id": 1,
@@ -59,19 +59,18 @@ Authorization: Bearer <token>
 }
 ```
 
-## Error Response Example
+## Contoh Error
 
 ```json
 {
   "success": false,
-  "message": "Validation failed.",
+  "message": "Validasi gagal.",
   "data": null,
   "errors": {
     "claim_message": [
-      "The claim message field is required."
+      "Pesan klaim wajib diisi."
     ]
   },
   "meta": {}
 }
 ```
-

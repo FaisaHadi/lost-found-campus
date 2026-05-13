@@ -1,59 +1,59 @@
-# Reports and Categories API
+# API Laporan dan Kategori
 
-Base URL: `/api/v1`
+URL dasar: `/api/v1`
 
-All report endpoints require Sanctum bearer authentication. Category listing is public. Category mutations require an admin token.
+Semua endpoint laporan memerlukan autentikasi bearer Sanctum. Daftar kategori bersifat publik. Mutasi kategori memerlukan token admin.
 
-## Report Business Rules
+## Aturan Bisnis Laporan
 
-- New reports are created with `status=pending` and `moderation_status=pending`.
-- Admin approval changes `status=approved` and `moderation_status=approved`.
-- Admin rejection changes `status=rejected` and `moderation_status=rejected`.
-- Approved reports can receive claims.
-- Approved claims change the related report to `status=claimed`.
-- A report can be marked `completed` only after it is `claimed`.
-- Report owners and admins can update or delete reports.
-- Non-admin users can view approved reports and their own reports.
-- Image uploads are stored on the `public` disk under `reports/` with unique filenames.
-- Replacing or deleting a report image removes the previous file from storage.
+- Laporan baru dibuat dengan `status=pending` dan `moderation_status=pending`.
+- Persetujuan admin mengubah `status=approved` dan `moderation_status=approved`.
+- Penolakan admin mengubah `status=rejected` dan `moderation_status=rejected`.
+- Laporan yang disetujui dapat menerima klaim.
+- Klaim yang disetujui mengubah laporan terkait menjadi `status=claimed`.
+- Laporan hanya dapat ditandai `completed` setelah berstatus `claimed`.
+- Pemilik laporan dan admin dapat memperbarui atau menghapus laporan.
+- Pengguna biasa dapat melihat laporan yang disetujui dan laporan miliknya sendiri.
+- Gambar laporan disimpan di disk `public` pada folder `reports/` dengan nama unik.
+- Penggantian atau penghapusan gambar laporan akan menghapus file lama dari storage.
 
-## List Reports
+## Daftar Laporan
 
 `GET /api/v1/reports`
 
-Auth: required
+Autentikasi: wajib
 
-Query parameters:
+Query parameter:
 
-| Name | Description |
+| Nama | Deskripsi |
 | --- | --- |
-| `keyword` | Searches title, description, and location text |
-| `category_id` | Filters by category id |
-| `category_slug` | Filters by category slug |
-| `report_type` | `lost` or `found` |
+| `keyword` | Mencari judul, deskripsi, dan catatan lokasi |
+| `category_id` | Filter berdasarkan ID kategori |
+| `category_slug` | Filter berdasarkan slug kategori |
+| `report_type` | `lost` atau `found` |
 | `status` | `pending`, `approved`, `rejected`, `claimed`, `completed` |
-| `moderation_status` | Admin only filter: `pending`, `approved`, `rejected` |
+| `moderation_status` | Filter khusus admin: `pending`, `approved`, `rejected` |
 | `sort_by` | `created_at`, `updated_at`, `title`, `status`, `report_type` |
-| `sort_dir` | `asc` or `desc` |
-| `per_page` | 1 to 100 |
+| `sort_dir` | `asc` atau `desc` |
+| `per_page` | 1 sampai 100 |
 
-Example:
+Contoh:
 
 ```http
 GET /api/v1/reports?keyword=phone&category_slug=electronics&report_type=lost&status=approved
 Authorization: Bearer <token>
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Reports retrieved successfully.",
+  "message": "Laporan berhasil diambil.",
   "data": [
     {
       "id": 1,
-      "title": "Lost phone near library",
+      "title": "Ponsel hilang dekat perpustakaan",
       "report_type": "lost",
       "image_url": "http://localhost/storage/reports/example.png",
       "status": "approved",
@@ -68,43 +68,35 @@ Response:
 }
 ```
 
-## Create Report
+## Buat Laporan
 
 `POST /api/v1/reports`
 
-Auth: required
+Autentikasi: wajib
 
-Use `multipart/form-data` when sending an image.
+Gunakan `multipart/form-data` saat mengirim gambar.
 
-Request:
-
-```http
-POST /api/v1/reports
-Authorization: Bearer <token>
-Content-Type: multipart/form-data
-```
-
-Fields:
+Field:
 
 ```json
 {
   "category_id": 1,
-  "title": "Lost phone near library",
-  "description": "Black phone with a cracked case.",
+  "title": "Ponsel hilang dekat perpustakaan",
+  "description": "Ponsel hitam dengan casing retak.",
   "report_type": "lost",
-  "image": "<jpg|jpeg|png|webp up to 4MB>",
+  "image": "<jpg|jpeg|png|webp maksimal 4MB>",
   "latitude": -6.2,
   "longitude": 106.816666,
-  "location_text": "Main library entrance"
+  "location_text": "Pintu masuk perpustakaan utama"
 }
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Report created successfully and is pending moderation.",
+  "message": "Laporan berhasil dibuat dan menunggu moderasi.",
   "data": {
     "id": 1,
     "status": "pending",
@@ -113,107 +105,103 @@ Response:
 }
 ```
 
-## Show Report
+## Detail Laporan
 
 `GET /api/v1/reports/{id}`
 
-Auth: required
+Autentikasi: wajib
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Report retrieved successfully.",
+  "message": "Laporan berhasil diambil.",
   "data": {
     "id": 1,
-    "title": "Lost phone near library",
+    "title": "Ponsel hilang dekat perpustakaan",
     "category": {
       "id": 1,
-      "name": "Electronics"
+      "name": "Elektronik"
     }
   }
 }
 ```
 
-## Update Report
+## Perbarui Laporan
 
 `PUT /api/v1/reports/{id}`
 
-Auth: owner or admin
+Autentikasi: pemilik laporan atau admin
 
-Accepted fields: `category_id`, `title`, `description`, `report_type`, `image`, `remove_image`, `latitude`, `longitude`, `location_text`, `status`.
+Field yang diterima: `category_id`, `title`, `description`, `report_type`, `image`, `remove_image`, `latitude`, `longitude`, `location_text`, `status`.
 
-Only `status=completed` is accepted through this endpoint, and only for claimed reports.
-
-Request:
+Hanya `status=completed` yang diterima melalui endpoint ini, dan hanya untuk laporan yang sudah diklaim.
 
 ```json
 {
-  "location_text": "Security office",
+  "location_text": "Kantor keamanan",
   "status": "completed"
 }
 ```
 
-## Delete Report
+## Hapus Laporan
 
 `DELETE /api/v1/reports/{id}`
 
-Auth: owner or admin
+Autentikasi: pemilik laporan atau admin
 
-Deletes the report with soft delete and removes the stored image file.
+Menghapus laporan dengan soft delete dan menghapus file gambar yang tersimpan.
 
-## Admin Report Moderation
+## Moderasi Laporan Admin
 
 `PATCH /api/v1/admin/reports/{id}/approve`
 
-Auth: admin
+Autentikasi: admin
 
-Approves a report and creates an unread notification for the report owner.
+Menyetujui laporan dan membuat notifikasi belum dibaca untuk pemilik laporan.
 
 `PATCH /api/v1/admin/reports/{id}/reject`
 
-Auth: admin
-
-Request:
+Autentikasi: admin
 
 ```json
 {
-  "reason": "Photo is unclear."
+  "reason": "Foto tidak jelas."
 }
 ```
 
-Rejects a report and creates an unread notification for the report owner.
+Menolak laporan dan membuat notifikasi belum dibaca untuk pemilik laporan.
 
-## Categories
+## Kategori
 
-### List Categories
+### Daftar Kategori
 
 `GET /api/v1/categories`
 
-Auth: not required
+Autentikasi: tidak wajib
 
-Query parameters: `keyword`, `status`, `sort_by`, `sort_dir`, `per_page`, `page`.
+Query parameter: `keyword`, `status`, `sort_by`, `sort_dir`, `per_page`, `page`.
 
-### Create Category
+### Buat Kategori
 
 `POST /api/v1/categories`
 
-Auth: admin
+Autentikasi: admin
 
 ```json
 {
-  "name": "Electronics",
-  "description": "Phones, laptops, chargers, and accessories.",
+  "name": "Elektronik",
+  "description": "Ponsel, laptop, charger, dan aksesori.",
   "status": "active"
 }
 ```
 
-### Update Category
+### Perbarui Kategori
 
 `PUT /api/v1/categories/{id}`
 
-Auth: admin
+Autentikasi: admin
 
 ```json
 {
@@ -221,10 +209,10 @@ Auth: admin
 }
 ```
 
-### Delete Category
+### Hapus Kategori
 
 `DELETE /api/v1/categories/{id}`
 
-Auth: admin
+Autentikasi: admin
 
-Soft deletes the category. Reports keep a nullable category reference.
+Kategori dihapus dengan soft delete. Laporan tetap menyimpan referensi kategori yang nullable.

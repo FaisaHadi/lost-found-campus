@@ -37,13 +37,13 @@ class ClaimService
 
         if (! $report) {
             throw ValidationException::withMessages([
-                'report_id' => ['The selected report does not exist.'],
+                'report_id' => ['Laporan yang dipilih tidak ditemukan.'],
             ]);
         }
 
         if ($report->user_id === $user->id) {
             throw ValidationException::withMessages([
-                'report_id' => ['Users cannot claim their own reports.'],
+                'report_id' => ['Pengguna tidak dapat mengklaim laporan miliknya sendiri.'],
             ]);
         }
 
@@ -52,13 +52,13 @@ class ClaimService
             || $report->status !== ReportStatus::Approved
         ) {
             throw ValidationException::withMessages([
-                'report_id' => ['Only approved, unclaimed reports can be claimed.'],
+                'report_id' => ['Hanya laporan yang disetujui dan belum diklaim yang dapat diklaim.'],
             ]);
         }
 
         if ($this->claimRepository->existsForReportAndClaimant($report->id, $user->id)) {
             throw ValidationException::withMessages([
-                'report_id' => ['You have already submitted a claim for this report.'],
+                'report_id' => ['Anda sudah mengajukan klaim untuk laporan ini.'],
             ]);
         }
 
@@ -92,8 +92,8 @@ class ClaimService
 
         $this->notificationService->createForUser(
             $claim->claimant_id,
-            'Claim approved',
-            "Your claim for \"{$claim->report->title}\" has been approved.",
+            'Klaim disetujui',
+            "Klaim Anda untuk \"{$claim->report->title}\" telah disetujui.",
             $claim->report,
             $claim
         );
@@ -115,8 +115,8 @@ class ClaimService
 
         $this->notificationService->createForUser(
             $claim->claimant_id,
-            'Claim rejected',
-            "Your claim for \"{$claim->report->title}\" has been rejected.",
+            'Klaim ditolak',
+            "Klaim Anda untuk \"{$claim->report->title}\" telah ditolak.",
             $claim->report,
             $claim
         );
@@ -140,8 +140,8 @@ class ClaimService
 
             $this->notificationService->createForUser(
                 $claim->claimant_id,
-                'Claim rejected',
-                "Your claim for \"{$claim->report->title}\" has been rejected because another claim was approved.",
+                'Klaim ditolak',
+                "Klaim Anda untuk \"{$claim->report->title}\" ditolak karena klaim lain telah disetujui.",
                 $claim->report,
                 $claim
             );
@@ -152,7 +152,7 @@ class ClaimService
     {
         if ($claim->status !== ClaimStatus::Pending) {
             throw ValidationException::withMessages([
-                'status' => ['Only pending claims can be reviewed.'],
+                'status' => ['Hanya klaim berstatus menunggu yang dapat ditinjau.'],
             ]);
         }
     }

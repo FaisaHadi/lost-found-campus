@@ -18,7 +18,7 @@ document.querySelectorAll('[data-loading-form]').forEach((form) => {
 
         button.disabled = true;
         button.dataset.originalText = button.textContent.trim();
-        button.textContent = button.dataset.loadingText || 'Working...';
+        button.textContent = button.dataset.loadingText || 'Memproses...';
     });
 });
 
@@ -82,13 +82,13 @@ document.querySelectorAll('[data-dropzone]').forEach((dropzone) => {
 
         if (!acceptedTypes.includes(file.type)) {
             input.value = '';
-            showError('Use a JPG, PNG, or WEBP image.');
+            showError('Gunakan gambar JPG, PNG, atau WEBP.');
             return;
         }
 
         if (file.size > maxSize) {
             input.value = '';
-            showError('Image must be 4 MB or smaller.');
+            showError('Ukuran gambar maksimal 4 MB.');
             return;
         }
 

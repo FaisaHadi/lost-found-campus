@@ -33,7 +33,7 @@ class AuthService
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are invalid.'],
+                'email' => ['Email atau kata sandi tidak valid.'],
             ]);
         }
 

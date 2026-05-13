@@ -63,7 +63,7 @@ class ReportController extends Controller
 
         return redirect()
             ->route('admin.reports.show', $report)
-            ->with('success', 'Report updated successfully.');
+            ->with('success', 'Laporan berhasil diperbarui.');
     }
 
     public function approve(Report $report): RedirectResponse
@@ -72,7 +72,7 @@ class ReportController extends Controller
 
         $this->reportService->approve($report);
 
-        return back()->with('success', 'Report approved and the owner was notified.');
+        return back()->with('success', 'Laporan disetujui dan pemilik telah diberi notifikasi.');
     }
 
     public function reject(ReportUpdateRequest $request, Report $report): RedirectResponse
@@ -81,6 +81,6 @@ class ReportController extends Controller
 
         $this->reportService->reject($report, $request->validated('reason'));
 
-        return back()->with('success', 'Report rejected and the owner was notified.');
+        return back()->with('success', 'Laporan ditolak dan pemilik telah diberi notifikasi.');
     }
 }

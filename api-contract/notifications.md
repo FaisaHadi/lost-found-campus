@@ -1,37 +1,37 @@
-# Notifications API Contract
+# Kontrak API Notifikasi
 
-Base path: `/api/v1`
+Path dasar: `/api/v1`
 
-## Standard JSON Format
+## Format JSON Standar
 
 ```json
 {
   "success": true,
-  "message": "Request completed successfully.",
+  "message": "Permintaan berhasil diproses.",
   "data": {},
   "errors": null,
   "meta": {}
 }
 ```
 
-## Auth Requirement Placeholder
+## Kebutuhan Autentikasi
 
-Notification endpoints are expected to require Laravel Sanctum authentication.
+Endpoint notifikasi memerlukan autentikasi Laravel Sanctum.
 
 ```http
 Authorization: Bearer <token>
 ```
 
-## Endpoint Table
+## Tabel Endpoint
 
-| Method | Endpoint | Description | Auth Required |
+| Method | Endpoint | Deskripsi | Autentikasi Wajib |
 | --- | --- | --- | --- |
-| GET | `/api/v1/notifications` | List user notifications | Yes |
-| GET | `/api/v1/notifications/{notification}` | Show notification detail | Yes |
-| POST | `/api/v1/notifications/{notification}/read` | Mark notification as read | Yes |
-| POST | `/api/v1/notifications/read-all` | Mark all notifications as read | Yes |
+| GET | `/api/v1/notifications` | Menampilkan notifikasi pengguna | Ya |
+| GET | `/api/v1/notifications/{notification}` | Menampilkan detail notifikasi | Ya |
+| POST | `/api/v1/notifications/{notification}/read` | Menandai notifikasi sebagai dibaca | Ya |
+| POST | `/api/v1/notifications/read-all` | Menandai semua notifikasi sebagai dibaca | Ya |
 
-## Request Example
+## Contoh Permintaan
 
 ```json
 {
@@ -39,12 +39,12 @@ Authorization: Bearer <token>
 }
 ```
 
-## Response Example
+## Contoh Respons
 
 ```json
 {
   "success": true,
-  "message": "Notification updated successfully.",
+  "message": "Notifikasi berhasil diperbarui.",
   "data": {
     "notification": {
       "id": "notification-id-placeholder",
@@ -56,19 +56,18 @@ Authorization: Bearer <token>
 }
 ```
 
-## Error Response Example
+## Contoh Error
 
 ```json
 {
   "success": false,
-  "message": "Notification not found.",
+  "message": "Notifikasi tidak ditemukan.",
   "data": null,
   "errors": {
     "notification": [
-      "The requested notification could not be found."
+      "Notifikasi yang diminta tidak ditemukan."
     ]
   },
   "meta": {}
 }
 ```
-

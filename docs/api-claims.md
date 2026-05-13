@@ -1,100 +1,108 @@
-# Claims API
+# API Klaim
 
-Base URL: `/api/v1`
+URL dasar: `/api/v1`
 
-All claim endpoints require Sanctum bearer authentication.
+Semua endpoint klaim memerlukan autentikasi bearer Sanctum.
 
-## Business Rules
+## Aturan Bisnis
 
-- Users cannot claim their own reports.
-- Claims require `proof_text`.
-- Claims can only be submitted for reports with `status=approved` and `moderation_status=approved`.
-- One report can have multiple claims from different users.
-- A user can submit only one active claim per report.
-- Admins review claims.
-- Approving a claim changes the claim to `approved`, changes the report to `claimed`, and rejects competing pending claims.
-- Rejecting a claim changes the claim to `rejected`.
-- Claim approval and rejection create unread notifications for claimants.
-- Admins can view all claims.
-- Regular users can view claims they submitted and claims on reports they own.
+- Pengguna tidak dapat mengklaim laporan miliknya sendiri.
+- Klaim wajib memiliki `proof_text`.
+- Klaim hanya dapat diajukan untuk laporan dengan `status=approved` dan `moderation_status=approved`.
+- Satu laporan dapat memiliki beberapa klaim dari pengguna berbeda.
+- Satu pengguna hanya dapat mengirim satu klaim aktif untuk satu laporan.
+- Admin meninjau klaim.
+- Persetujuan klaim mengubah klaim menjadi `approved`, mengubah laporan menjadi `claimed`, dan menolak klaim lain yang masih `pending`.
+- Penolakan klaim mengubah klaim menjadi `rejected`.
+- Persetujuan dan penolakan klaim membuat notifikasi belum dibaca untuk pengaju klaim.
+- Admin dapat melihat semua klaim.
+- Pengguna biasa dapat melihat klaim yang ia ajukan dan klaim pada laporan miliknya.
 
-## Create Claim
+## Buat Klaim
 
 `POST /api/v1/claims`
 
-Auth: required
+Autentikasi: wajib
 
-Request:
+Permintaan:
 
 ```json
 {
   "report_id": 10,
-  "proof_text": "I can identify the item serial number and describe the stickers on the case."
+  "proof_text": "Saya bisa menyebutkan nomor seri barang dan menjelaskan stiker pada casing."
 }
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Claim submitted successfully and is pending admin review.",
+  "message": "Klaim berhasil dikirim dan menunggu tinjauan admin.",
   "data": {
     "id": 4,
     "report_id": 10,
     "status": "pending",
-    "proof_text": "I can identify the item serial number and describe the stickers on the case."
+    "proof_text": "Saya bisa menyebutkan nomor seri barang dan menjelaskan stiker pada casing."
   }
 }
 ```
 
-Validation error example:
+Contoh error validasi:
 
 ```json
 {
   "success": false,
+  "message": "Pengguna tidak dapat mengklaim laporan miliknya sendiri.",
+  "data": null,
+  "errors": {
+    "report_id": [
+      "Pengguna tidak dapat mengklaim laporan miliknya sendiri."
+    ]
+  },
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Users cannot claim their own reports.",
+    "message": "Pengguna tidak dapat mengklaim laporan miliknya sendiri.",
     "details": {
       "report_id": [
-        "Users cannot claim their own reports."
+        "Pengguna tidak dapat mengklaim laporan miliknya sendiri."
       ]
     }
-  }
+  },
+  "meta": {}
 }
 ```
 
-## List Claims
+## Daftar Klaim
 
 `GET /api/v1/claims`
 
-Auth: required
+Autentikasi: wajib
 
-Query parameters:
+Query parameter:
 
-| Name | Description |
+| Nama | Deskripsi |
 | --- | --- |
-| `status` | `pending`, `approved`, or `rejected` |
-| `report_id` | Filter by report |
-| `claimant_id` | Admin only filter |
+| `status` | `pending`, `approved`, atau `rejected` |
+| `report_id` | Filter berdasarkan laporan |
+| `claimant_id` | Filter khusus admin |
 | `sort_by` | `created_at`, `updated_at`, `status` |
-| `sort_dir` | `asc` or `desc` |
-| `per_page` | 1 to 100 |
+| `sort_dir` | `asc` atau `desc` |
+| `per_page` | 1 sampai 100 |
 
-Example:
+Contoh:
 
 ```http
 GET /api/v1/claims?status=pending&per_page=10
 Authorization: Bearer <token>
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Claims retrieved successfully.",
+  "message": "Klaim berhasil diambil.",
   "data": [
     {
       "id": 4,
@@ -103,7 +111,7 @@ Response:
       "status": "pending",
       "report": {
         "id": 10,
-        "title": "Found backpack"
+        "title": "Ditemukan ransel"
       }
     }
   ],
@@ -115,43 +123,41 @@ Response:
 }
 ```
 
-## Show Claim
+## Detail Klaim
 
 `GET /api/v1/claims/{id}`
 
-Auth: admin, claimant, or report owner
+Autentikasi: admin, pengaju klaim, atau pemilik laporan
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Claim retrieved successfully.",
+  "message": "Klaim berhasil diambil.",
   "data": {
     "id": 4,
     "status": "pending",
     "claimant": {
       "id": 8,
-      "name": "Student User"
+      "name": "Pengguna Mahasiswa"
     }
   }
 }
 ```
 
-## Admin Claim Review
+## Review Klaim Admin
 
-### Approve Claim
+### Setujui Klaim
 
 `PATCH /api/v1/admin/claims/{id}/approve`
 
-Auth: admin
-
-Response:
+Autentikasi: admin
 
 ```json
 {
   "success": true,
-  "message": "Claim approved successfully.",
+  "message": "Klaim berhasil disetujui.",
   "data": {
     "id": 4,
     "status": "approved",
@@ -160,18 +166,16 @@ Response:
 }
 ```
 
-### Reject Claim
+### Tolak Klaim
 
 `PATCH /api/v1/admin/claims/{id}/reject`
 
-Auth: admin
-
-Response:
+Autentikasi: admin
 
 ```json
 {
   "success": true,
-  "message": "Claim rejected successfully.",
+  "message": "Klaim berhasil ditolak.",
   "data": {
     "id": 4,
     "status": "rejected",

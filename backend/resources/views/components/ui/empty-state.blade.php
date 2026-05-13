@@ -1,4 +1,4 @@
-@props(['title' => 'No data yet', 'message' => 'There is nothing to show right now.'])
+@props(['title' => 'Belum ada data', 'message' => 'Saat ini belum ada yang dapat ditampilkan.'])
 
 <div {{ $attributes->merge(['class' => 'rounded-lg border border-dashed border-gray-300 bg-white px-6 py-10 text-center']) }}>
     <p class="text-sm font-semibold text-gray-900">{{ $title }}</p>

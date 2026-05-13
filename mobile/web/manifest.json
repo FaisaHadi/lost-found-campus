@@ -1,11 +1,11 @@
 {
-    "name": "lost_found_campus",
-    "short_name": "lost_found_campus",
+    "name": "Lost & Found Campus",
+    "short_name": "Lost Found",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Aplikasi kampus untuk melaporkan, mencari, dan mengklaim barang hilang atau ditemukan.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -21,28 +21,28 @@ class AuthController extends Controller
     {
         $payload = $this->authService->register($request->validated());
 
-        return $this->successResponse($this->tokenPayload($payload), 'Registration completed successfully.', 201);
+        return $this->successResponse($this->tokenPayload($payload), 'Registrasi berhasil.', 201);
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         $payload = $this->authService->login($request->validated());
 
-        return $this->successResponse($this->tokenPayload($payload), 'Login completed successfully.');
+        return $this->successResponse($this->tokenPayload($payload), 'Masuk berhasil.');
     }
 
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout($request->user(), $request->bearerToken());
 
-        return $this->successResponse([], 'Logout completed successfully.');
+        return $this->successResponse([], 'Keluar berhasil.');
     }
 
     public function me(Request $request): JsonResponse
     {
         return $this->successResponse([
             'user' => UserResource::make($request->user()),
-        ], 'Authenticated user retrieved successfully.');
+        ], 'Data pengguna yang masuk berhasil diambil.');
     }
 
     /**

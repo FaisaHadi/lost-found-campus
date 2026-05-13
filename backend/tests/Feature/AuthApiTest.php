@@ -23,7 +23,7 @@ class AuthApiTest extends TestCase
         $response
             ->assertCreated()
             ->assertJsonPath('success', true)
-            ->assertJsonPath('message', 'Registration completed successfully.')
+            ->assertJsonPath('message', 'Registrasi berhasil.')
             ->assertJsonStructure([
                 'data' => [
                     'user' => ['id', 'name', 'email', 'role'],

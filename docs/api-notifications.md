@@ -1,54 +1,54 @@
-# Notifications API
+# API Notifikasi
 
-Base URL: `/api/v1`
+URL dasar: `/api/v1`
 
-All notification endpoints require Sanctum bearer authentication.
+Semua endpoint notifikasi memerlukan autentikasi bearer Sanctum.
 
-## Business Rules
+## Aturan Bisnis
 
-- Notifications are stored in the database.
-- Users can only list and update their own notifications.
-- Notifications start with `status=unread`.
-- Marking a notification as read changes `status=read` and sets `read_at`.
-- Notification triggers:
-  - Report approved
-  - Report rejected
-  - Claim approved
-  - Claim rejected
+- Notifikasi disimpan di database.
+- Pengguna hanya dapat melihat dan memperbarui notifikasinya sendiri.
+- Notifikasi dimulai dengan `status=unread`.
+- Menandai notifikasi sebagai dibaca mengubah `status=read` dan mengisi `read_at`.
+- Pemicu notifikasi:
+  - Laporan disetujui
+  - Laporan ditolak
+  - Klaim disetujui
+  - Klaim ditolak
 
-## List Notifications
+## Daftar Notifikasi
 
 `GET /api/v1/notifications`
 
-Auth: required
+Autentikasi: wajib
 
-Query parameters:
+Query parameter:
 
-| Name | Description |
+| Nama | Deskripsi |
 | --- | --- |
-| `status` | `unread` or `read` |
+| `status` | `unread` atau `read` |
 | `sort_by` | `created_at`, `updated_at`, `status` |
-| `sort_dir` | `asc` or `desc` |
-| `per_page` | 1 to 100 |
+| `sort_dir` | `asc` atau `desc` |
+| `per_page` | 1 sampai 100 |
 
-Example:
+Contoh:
 
 ```http
 GET /api/v1/notifications?status=unread
 Authorization: Bearer <token>
 ```
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Notifications retrieved successfully.",
+  "message": "Notifikasi berhasil diambil.",
   "data": [
     {
       "id": 12,
-      "title": "Report approved",
-      "message": "Your report \"Lost phone near library\" has been approved.",
+      "title": "Laporan disetujui",
+      "message": "Laporan Anda \"Ponsel hilang dekat perpustakaan\" telah disetujui.",
       "status": "unread",
       "read_at": null,
       "report_id": 3,
@@ -63,35 +63,39 @@ Response:
 }
 ```
 
-## Mark Notification As Read
+## Tandai Notifikasi Sebagai Dibaca
 
 `PATCH /api/v1/notifications/{id}/read`
 
-Auth: notification owner
+Autentikasi: pemilik notifikasi
 
-Response:
+Respons:
 
 ```json
 {
   "success": true,
-  "message": "Notification marked as read.",
+  "message": "Notifikasi ditandai sebagai dibaca.",
   "data": {
     "id": 12,
-    "title": "Report approved",
+    "title": "Laporan disetujui",
     "status": "read",
     "read_at": "2026-05-13T10:00:00.000000Z"
   }
 }
 ```
 
-Forbidden response:
+Respons dilarang:
 
 ```json
 {
   "success": false,
+  "message": "Anda tidak diizinkan melakukan aksi ini.",
+  "data": null,
+  "errors": null,
   "error": {
     "code": "FORBIDDEN",
-    "message": "You are not allowed to perform this action."
-  }
+    "message": "Anda tidak diizinkan melakukan aksi ini."
+  },
+  "meta": {}
 }
 ```

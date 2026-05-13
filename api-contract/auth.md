@@ -1,57 +1,57 @@
-# Auth API Contract
+# Kontrak API Autentikasi
 
-Base path: `/api/v1`
+Path dasar: `/api/v1`
 
-## Standard JSON Format
+## Format JSON Standar
 
 ```json
 {
   "success": true,
-  "message": "Request completed successfully.",
+  "message": "Permintaan berhasil diproses.",
   "data": {},
   "errors": null,
   "meta": {}
 }
 ```
 
-## Auth Requirement Placeholder
+## Kebutuhan Autentikasi
 
-Authentication will use Laravel Sanctum. Public endpoints do not require a token. Protected endpoints require:
+Autentikasi memakai Laravel Sanctum. Endpoint publik tidak memerlukan token. Endpoint terlindungi memerlukan header:
 
 ```http
 Authorization: Bearer <token>
 ```
 
-## Endpoint Table
+## Tabel Endpoint
 
-| Method | Endpoint | Description | Auth Required |
+| Method | Endpoint | Deskripsi | Autentikasi Wajib |
 | --- | --- | --- | --- |
-| POST | `/api/v1/auth/register` | Register a new user account | No |
-| POST | `/api/v1/auth/login` | Authenticate user and return token | No |
-| GET | `/api/v1/auth/me` | Get authenticated user profile | Yes |
-| POST | `/api/v1/auth/logout` | Revoke current access token | Yes |
+| POST | `/api/v1/auth/register` | Mendaftarkan akun pengguna baru | Tidak |
+| POST | `/api/v1/auth/login` | Mengautentikasi pengguna dan mengembalikan token | Tidak |
+| GET | `/api/v1/auth/me` | Mengambil profil pengguna yang sedang masuk | Ya |
+| POST | `/api/v1/auth/logout` | Mencabut token akses saat ini | Ya |
 
-## Request Example
+## Contoh Permintaan
 
 ```json
 {
-  "name": "Student User",
+  "name": "Pengguna Mahasiswa",
   "email": "student@example.com",
   "password": "password",
   "password_confirmation": "password"
 }
 ```
 
-## Response Example
+## Contoh Respons
 
 ```json
 {
   "success": true,
-  "message": "Authentication completed successfully.",
+  "message": "Autentikasi berhasil.",
   "data": {
     "user": {
       "id": 1,
-      "name": "Student User",
+      "name": "Pengguna Mahasiswa",
       "email": "student@example.com"
     },
     "token": "plain-text-token-placeholder"
@@ -61,19 +61,18 @@ Authorization: Bearer <token>
 }
 ```
 
-## Error Response Example
+## Contoh Error
 
 ```json
 {
   "success": false,
-  "message": "Validation failed.",
+  "message": "Validasi gagal.",
   "data": null,
   "errors": {
     "email": [
-      "The email field is required."
+      "Email wajib diisi."
     ]
   },
   "meta": {}
 }
 ```
-

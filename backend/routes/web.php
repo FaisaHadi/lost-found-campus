@@ -8,12 +8,9 @@ use App\Http\Controllers\Web\Admin\ReportController;
 use App\Http\Controllers\Web\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
-});
-
-Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
-Route::get('/dashboard', fn () => redirect()->route('admin.dashboard'))->name('dashboard');
+Route::redirect('/', '/admin');
+Route::redirect('/login', '/admin/login')->name('login');
+Route::redirect('/dashboard', '/admin')->name('dashboard');
 
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');

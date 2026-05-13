@@ -1,7 +1,20 @@
 @props(['value' => null, 'variant' => null])
 
 @php
-    $label = $value ? str($value)->replace('_', ' ')->title() : trim($slot);
+    $labels = [
+        'pending' => 'Menunggu',
+        'approved' => 'Disetujui',
+        'rejected' => 'Ditolak',
+        'claimed' => 'Diklaim',
+        'completed' => 'Selesai',
+        'lost' => 'Hilang',
+        'found' => 'Ditemukan',
+        'active' => 'Aktif',
+        'inactive' => 'Tidak aktif',
+        'unread' => 'Belum dibaca',
+        'read' => 'Dibaca',
+    ];
+    $label = $value ? ($labels[$value] ?? str($value)->replace('_', ' ')->title()) : trim($slot);
     $key = $variant ?? $value;
     $classes = [
         'pending' => 'bg-amber-50 text-amber-700 ring-amber-200',

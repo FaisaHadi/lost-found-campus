@@ -1,110 +1,109 @@
-# Project Roadmap
+# Roadmap Project
 
-This roadmap keeps the Lost & Found Campus Platform scoped, phased, and stable. Phase 0 is foundation only and does not include business feature implementation.
+Roadmap ini menjaga Platform Lost & Found Campus tetap terarah, bertahap, dan stabil.
 
-## Project Phases
+## Fase Project
 
-### Phase 0: Engineering Foundation
+### Phase 0: Fondasi Engineering
 
-- Initialize repository structure.
-- Initialize Git and baseline ignore rules.
-- Create engineering documentation.
-- Create API contract foundation.
-- Initialize Laravel backend.
-- Initialize Flutter mobile application.
-- Prepare layered folder structure.
+- Inisialisasi struktur repository.
+- Inisialisasi Git dan aturan ignore dasar.
+- Membuat dokumentasi engineering.
+- Membuat fondasi kontrak API.
+- Inisialisasi backend Laravel.
+- Inisialisasi aplikasi mobile Flutter.
+- Menyiapkan struktur folder berlapis.
 
-### Phase 1: Backend Core Foundation
+### Phase 1: Fondasi Backend Core
 
-- Configure environment and MySQL connection.
-- Configure Laravel Sanctum.
-- Define shared API response helpers.
-- Define database migration plan.
-- Prepare authentication routes.
-- Add backend test baseline.
+- Konfigurasi environment dan koneksi MySQL.
+- Konfigurasi Laravel Sanctum.
+- Membuat helper response API bersama.
+- Menentukan rencana migrasi database.
+- Menyiapkan route autentikasi.
+- Menambahkan baseline test backend.
 
-### Phase 2: Lost and Found Domain
+### Phase 2: Domain Lost and Found
 
-- Implement report data model.
-- Implement claim data model.
-- Implement notification foundation.
-- Add validation and policies.
-- Add REST endpoints according to API contracts.
+- Implementasi model laporan.
+- Implementasi model klaim.
+- Implementasi fondasi notifikasi.
+- Menambahkan validasi dan policy.
+- Menambahkan endpoint REST sesuai kontrak API.
 
-### Phase 3: Web Administration Platform
+### Phase 3: Platform Administrasi Web
 
-- Prepare Blade layout and Tailwind assets.
-- Implement admin authentication flow.
-- Implement report management views.
-- Implement drag and drop upload.
-- Prepare PWA baseline.
+- Menyiapkan layout Blade dan aset Tailwind.
+- Implementasi alur autentikasi admin.
+- Implementasi halaman manajemen laporan.
+- Implementasi upload drag and drop.
+- Menyiapkan baseline PWA.
 
-### Phase 4: Flutter Mobile Application
+### Phase 4: Aplikasi Mobile Flutter
 
-- Configure API service layer.
-- Implement authentication flow.
-- Implement report submission flow.
-- Add camera integration.
-- Add GPS location integration.
+- Konfigurasi service layer API.
+- Implementasi alur autentikasi.
+- Implementasi alur pengiriman laporan.
+- Menambahkan integrasi kamera.
+- Menambahkan integrasi lokasi GPS.
 
-### Phase 5: Testing, Hardening, and Release Preparation
+### Fase 5: Pengujian, Pengerasan, dan Persiapan Rilis
 
-- Add feature and integration tests.
-- Verify API contract compatibility.
-- Test web and mobile workflows.
-- Review security and authorization rules.
-- Prepare final deployment documentation.
+- Menambahkan feature dan integration test.
+- Memverifikasi kompatibilitas kontrak API.
+- Menguji workflow web dan mobile.
+- Meninjau aturan keamanan dan otorisasi.
+- Menyiapkan dokumentasi deployment akhir.
 
-## Backend Roadmap
+## Roadmap Backend
 
-- Laravel 12 project initialization.
-- Sanctum authentication setup.
-- MySQL configuration.
-- Layered architecture folders.
-- API route versioning under `/api/v1/`.
-- Shared API response formatting.
-- Domain services and repositories.
-- Policies for protected resources.
-- Notifications for user-facing updates.
+- Inisialisasi Laravel 12.
+- Setup autentikasi Sanctum.
+- Konfigurasi MySQL.
+- Struktur folder arsitektur berlapis.
+- Versioning API di `/api/v1/`.
+- Format response API bersama.
+- Service dan repository domain.
+- Policy untuk resource terlindungi.
+- Notifikasi untuk pembaruan pengguna.
 
-## Web Roadmap
+## Roadmap Web
 
-- Laravel Blade administration interface.
-- Tailwind-based layout system.
-- Admin dashboard shell.
-- Report moderation interface.
-- Claim review interface.
-- Drag and drop upload support.
-- PWA setup.
+- Interface administrasi Laravel Blade.
+- Sistem layout berbasis Tailwind.
+- Shell dasbor admin.
+- Interface moderasi laporan.
+- Interface review klaim.
+- Dukungan upload drag and drop.
+- Setup PWA.
 
-## Mobile Roadmap
+## Roadmap Mobile
 
-- Flutter project initialization.
-- Clean folder structure under `lib/`.
-- API client service.
-- Authentication state provider.
-- Report submission screens.
-- Camera integration.
-- GPS location integration.
-- Mobile-friendly notification views.
+- Inisialisasi project Flutter.
+- Struktur bersih di bawah `lib/`.
+- Service API client.
+- Provider untuk state autentikasi.
+- Layar pengiriman laporan.
+- Integrasi kamera.
+- Integrasi lokasi GPS.
+- Tampilan notifikasi ramah mobile.
 
-## Testing Roadmap
+## Roadmap Pengujian
 
-- Backend unit tests for services.
-- Backend feature tests for API endpoints.
-- Authentication and authorization tests.
-- Repository integration tests where database behavior matters.
-- Flutter widget tests for critical screens.
-- Manual verification checklist for platform-specific features.
+- Unit test backend untuk service.
+- Feature test backend untuk endpoint API.
+- Test autentikasi dan otorisasi.
+- Test integrasi repository jika perilaku database penting.
+- Widget test Flutter untuk layar kritis.
+- Checklist verifikasi manual untuk fitur khusus platform.
 
-## Documentation Roadmap
+## Roadmap Dokumentasi
 
-- Engineering rules.
-- API contracts.
-- Backend setup guide.
-- Mobile setup guide.
-- Database schema documentation.
-- Testing guide.
-- Deployment notes.
-- Final project report support documentation.
-
+- Aturan engineering.
+- Kontrak API.
+- Panduan setup backend.
+- Panduan setup mobile.
+- Dokumentasi skema database.
+- Panduan testing.
+- Catatan deployment.
+- Dokumentasi pendukung laporan akhir.

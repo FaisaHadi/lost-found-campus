@@ -23,7 +23,7 @@ class CategoryController extends Controller
 
         return $this->paginatedResponse(
             CategoryResource::collection($categories),
-            'Categories retrieved successfully.'
+            'Kategori berhasil diambil.'
         );
     }
 
@@ -33,7 +33,7 @@ class CategoryController extends Controller
 
         return $this->successResponse(
             CategoryResource::make($category),
-            'Category created successfully.',
+            'Kategori berhasil dibuat.',
             201
         );
     }
@@ -44,7 +44,7 @@ class CategoryController extends Controller
 
         return $this->successResponse(
             CategoryResource::make($category),
-            'Category updated successfully.'
+            'Kategori berhasil diperbarui.'
         );
     }
 
@@ -52,6 +52,6 @@ class CategoryController extends Controller
     {
         $this->categoryService->delete($category);
 
-        return $this->successResponse([], 'Category deleted successfully.');
+        return $this->successResponse([], 'Kategori berhasil dihapus.');
     }
 }

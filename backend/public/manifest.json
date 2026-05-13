@@ -1,7 +1,7 @@
 {
-    "name": "Lost & Found Campus Admin",
-    "short_name": "Campus Admin",
-    "description": "Administration and moderation platform for campus lost and found reports.",
+    "name": "Admin Lost & Found Campus",
+    "short_name": "Admin Kampus",
+    "description": "Platform administrasi dan moderasi untuk laporan barang hilang dan ditemukan di kampus.",
     "start_url": "/admin",
     "scope": "/",
     "display": "standalone",

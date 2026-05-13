@@ -40,8 +40,8 @@ class WebAdminPlatformTest extends TestCase
 
         $this->get('/admin')
             ->assertOk()
-            ->assertSee('Administration & Moderation Platform', false)
-            ->assertSee('Total reports');
+            ->assertSee('Platform Administrasi dan Moderasi', false)
+            ->assertSee('Total laporan');
     }
 
     public function test_non_admin_user_cannot_login_to_admin_platform(): void
@@ -80,7 +80,7 @@ class WebAdminPlatformTest extends TestCase
         $this->assertDatabaseHas('notifications', [
             'user_id' => $owner->id,
             'report_id' => $report->id,
-            'title' => 'Report approved',
+            'title' => 'Laporan disetujui',
         ]);
     }
 
