@@ -27,6 +27,8 @@ class Report extends Model
         'location_text',
         'status',
         'moderation_status',
+        'moderated_by',
+        'moderated_at',
     ];
 
     protected function casts(): array
@@ -37,6 +39,7 @@ class Report extends Model
             'report_type' => ReportType::class,
             'status' => ReportStatus::class,
             'moderation_status' => ModerationStatus::class,
+            'moderated_at' => 'datetime',
         ];
     }
 
@@ -48,6 +51,16 @@ class Report extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ReportImage::class)->orderBy('sort_order');
+    }
+
+    public function moderator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'moderated_by');
     }
 
     public function claims(): HasMany

@@ -12,9 +12,9 @@ use Illuminate\Http\JsonResponse;
 
 class ClaimController extends Controller
 {
-    public function __construct(
-        private readonly ClaimService $claimService
-    ) {}
+    public function __construct(private readonly ClaimService $claimService)
+    {
+    }
 
     public function index(IndexClaimRequest $request): JsonResponse
     {
@@ -43,8 +43,7 @@ class ClaimController extends Controller
 
     public function show(Claim $claim): JsonResponse
     {
-        $claim->load(['report.category', 'report.user', 'claimant', 'reviewer']);
-
+        $claim->load(['report.category', 'report.user', 'claimant', 'reviewer', 'images']);
         $this->authorize('view', $claim);
 
         return $this->successResponse(

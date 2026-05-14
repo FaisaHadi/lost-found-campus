@@ -13,9 +13,9 @@ use Illuminate\Http\JsonResponse;
 
 class ReportController extends Controller
 {
-    public function __construct(
-        private readonly ReportService $reportService
-    ) {}
+    public function __construct(private readonly ReportService $reportService)
+    {
+    }
 
     public function index(IndexReportRequest $request): JsonResponse
     {
@@ -44,8 +44,7 @@ class ReportController extends Controller
 
     public function show(Report $report): JsonResponse
     {
-        $report->load(['user', 'category'])->loadCount('claims');
-
+        $report->load(['user', 'category', 'images'])->loadCount('claims');
         $this->authorize('view', $report);
 
         return $this->successResponse(

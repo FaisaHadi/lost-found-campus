@@ -18,34 +18,55 @@ class ReportService
     public function __construct(
         private readonly ReportRepository $reportRepository,
         private readonly ImageStorageService $imageStorageService,
-        private readonly NotificationService $notificationService
-    ) {}
+        private readonly NotificationService $notificationService,
+        private readonly ActivityLogService $activityLogService,
+    ) {
+    }
 
+    /**
+     * @param array<string,mixed> $filters
+     */
     public function listForUser(User $user, array $filters): LengthAwarePaginator
     {
         return $this->reportRepository->paginateForUser($user, $filters);
     }
 
+    /**
+     * @param array<string,mixed> $data
+     */
     public function create(User $user, array $data): Report
     {
-        $imagePath = null;
-
-        if (($data['image'] ?? null) instanceof UploadedFile) {
-            $imagePath = $this->imageStorageService->storeReportImage($data['image']);
-        }
+        $imageFiles = $this->normalizeImages($data);
+        $storedImages = [];
 
         try {
-            return DB::transaction(function () use ($user, $data, $imagePath) {
-                return $this->reportRepository->create([
-                    ...Arr::except($data, ['image', 'remove_image', 'status']),
-                    'user_id' => $user->id,
-                    'image_path' => $imagePath,
-                    'status' => ReportStatus::Pending->value,
-                    'moderation_status' => ModerationStatus::Pending->value,
-                ]);
+            foreach ($imageFiles as $image) {
+                $storedImages[] = [
+                    'path' => $this->imageStorageService->storeReportImage($image),
+                    'file' => $image,
+                ];
+            }
+
+            return DB::transaction(function () use ($user, $data, $storedImages): Report {
+                $report = $this->reportRepository->create(array_merge(
+                    Arr::except($data, ['image', 'images', 'remove_image', 'status', 'moderation_status']),
+                    [
+                        'user_id' => $user->id,
+                        'image_path' => $storedImages[0]['path'] ?? null,
+                        'status' => ReportStatus::Pending->value,
+                        'moderation_status' => ModerationStatus::Pending->value,
+                    ]
+                ));
+
+                $this->persistReportImages($report, $storedImages);
+                $this->activityLogService->record('create_report', 'Pengguna membuat laporan barang.', $report, $user);
+
+                return $report->refresh()->load(['user', 'category', 'images'])->loadCount('claims');
             });
         } catch (\Throwable $exception) {
-            $this->imageStorageService->delete($imagePath);
+            foreach ($storedImages as $storedImage) {
+                $this->imageStorageService->delete($storedImage['path']);
+            }
 
             throw $exception;
         }
@@ -56,155 +77,133 @@ class ReportService
         return $this->reportRepository->findById($id);
     }
 
+    /**
+     * @param array<string,mixed> $data
+     */
     public function update(Report $report, array $data): Report
     {
-        $oldImagePath = $report->image_path;
-        $newImagePath = null;
-
-        if (($data['image'] ?? null) instanceof UploadedFile) {
-            $newImagePath = $this->imageStorageService->storeReportImage($data['image']);
-            $data['image_path'] = $newImagePath;
-        }
-
-        if (($data['remove_image'] ?? false) && ! $newImagePath) {
-            $data['image_path'] = null;
-        }
-
-        if (($data['status'] ?? null) === ReportStatus::Completed->value) {
-            $this->ensureReportCanBeCompleted($report);
-        }
+        $imageFiles = $this->normalizeImages($data);
+        $storedImages = [];
 
         try {
-            $updatedReport = DB::transaction(function () use ($report, $data) {
-                return $this->reportRepository->update(
-                    $report,
-                    Arr::except($data, ['image', 'remove_image'])
-                );
+            foreach ($imageFiles as $image) {
+                $storedImages[] = [
+                    'path' => $this->imageStorageService->storeReportImage($image),
+                    'file' => $image,
+                ];
+            }
+
+            return DB::transaction(function () use ($report, $data, $storedImages): Report {
+                if (($data['remove_image'] ?? false) === true) {
+                    $this->deleteAllReportImages($report);
+                    $data['image_path'] = null;
+                } elseif ($storedImages !== []) {
+                    $data['image_path'] = $storedImages[0]['path'];
+                }
+
+                $report = $this->reportRepository->update($report, Arr::except($data, ['image', 'images', 'remove_image']));
+                $this->persistReportImages($report, $storedImages);
+                $this->activityLogService->record('update_report', 'Pengguna memperbarui laporan barang.', $report);
+
+                return $report->refresh()->load(['user', 'category', 'images'])->loadCount('claims');
             });
         } catch (\Throwable $exception) {
-            $this->imageStorageService->delete($newImagePath);
+            foreach ($storedImages as $storedImage) {
+                $this->imageStorageService->delete($storedImage['path']);
+            }
 
             throw $exception;
         }
-
-        if ($newImagePath || array_key_exists('image_path', $data)) {
-            $this->imageStorageService->delete($oldImagePath);
-        }
-
-        return $updatedReport;
     }
 
     public function delete(Report $report): void
     {
-        DB::transaction(function () use ($report) {
+        $imagePaths = $report->images()->pluck('image_path')->all();
+        if ($report->image_path) {
+            $imagePaths[] = $report->image_path;
+        }
+
+        DB::transaction(function () use ($report): void {
+            $this->activityLogService->record('delete_report', 'Pengguna menghapus laporan barang.', $report);
             $this->reportRepository->delete($report);
         });
 
-        $this->imageStorageService->delete($report->image_path);
-    }
-
-    public function approve(Report $report): Report
-    {
-        $report = DB::transaction(function () use ($report) {
-            return $this->reportRepository->update($report, [
-                'status' => ReportStatus::Approved->value,
-                'moderation_status' => ModerationStatus::Approved->value,
-            ]);
-        });
-
-        $this->notificationService->createForUser(
-            $report->user_id,
-            'Laporan disetujui',
-            "Laporan Anda \"{$report->title}\" telah disetujui.",
-            $report
-        );
-
-        return $report;
-    }
-
-    public function reject(Report $report, ?string $reason = null): Report
-    {
-        $report = DB::transaction(function () use ($report) {
-            return $this->reportRepository->update($report, [
-                'status' => ReportStatus::Rejected->value,
-                'moderation_status' => ModerationStatus::Rejected->value,
-            ]);
-        });
-
-        $message = "Laporan Anda \"{$report->title}\" telah ditolak.";
-
-        if ($reason) {
-            $message .= " Alasan: {$reason}";
+        foreach (array_unique(array_filter($imagePaths)) as $imagePath) {
+            $this->imageStorageService->delete($imagePath);
         }
-
-        $this->notificationService->createForUser(
-            $report->user_id,
-            'Laporan ditolak',
-            $message,
-            $report
-        );
-
-        return $report;
     }
 
-    public function changeStatus(Report $report, string $status, ?string $reason = null): Report
+    public function approve(Report $report, User $admin): Report
     {
-        if ($status === ($report->status?->value ?? $report->status)) {
-            return $report->load(['user', 'category'])->loadCount('claims');
-        }
+        return $this->setModerationState(
+            $report,
+            ModerationStatus::Approved,
+            $admin,
+            'Laporan Anda telah diverifikasi.',
+            'Laporan barang telah disetujui oleh admin.',
+            'verify_report'
+        );
+    }
 
-        return match ($status) {
-            ReportStatus::Pending->value => $this->setModerationState(
-                $report,
-                ReportStatus::Pending,
-                ModerationStatus::Pending
-            ),
-            ReportStatus::Approved->value => $this->approve($report),
-            ReportStatus::Rejected->value => $this->reject($report, $reason),
-            ReportStatus::Claimed->value => $this->setClaimed($report),
-            ReportStatus::Completed->value => $this->setCompleted($report),
-            default => throw ValidationException::withMessages([
-                'status' => ['Status laporan yang dipilih tidak valid.'],
-            ]),
-        };
+    public function reject(Report $report, User $admin, ?string $reason = null): Report
+    {
+        return $this->setModerationState(
+            $report,
+            ModerationStatus::Rejected,
+            $admin,
+            'Laporan Anda ditolak.',
+            $reason ?: 'Laporan barang ditolak oleh admin.',
+            'reject_report'
+        );
+    }
+
+    public function changeStatus(Report $report, ReportStatus $status): Report
+    {
+        return $this->reportRepository->update($report, [
+            'status' => $status->value,
+        ]);
+    }
+
+    public function setClaimed(Report $report): Report
+    {
+        return $this->changeStatus($report, ReportStatus::Claimed);
+    }
+
+    public function setCompleted(Report $report): Report
+    {
+        $this->ensureReportCanBeCompleted($report);
+
+        $updatedReport = $this->changeStatus($report, ReportStatus::Completed);
+        $this->activityLogService->record('complete_report', 'Status laporan diubah menjadi selesai.', $updatedReport);
+
+        return $updatedReport;
     }
 
     private function setModerationState(
         Report $report,
-        ReportStatus $status,
-        ModerationStatus $moderationStatus
+        ModerationStatus $status,
+        User $admin,
+        string $title,
+        string $message,
+        string $action
     ): Report {
-        return DB::transaction(function () use ($report, $status, $moderationStatus) {
-            return $this->reportRepository->update($report, [
-                'status' => $status->value,
-                'moderation_status' => $moderationStatus->value,
+        return DB::transaction(function () use ($report, $status, $admin, $title, $message, $action): Report {
+            $updatedReport = $this->reportRepository->update($report, [
+                'moderation_status' => $status->value,
+                'moderated_by' => $admin->id,
+                'moderated_at' => now(),
             ]);
-        });
-    }
 
-    private function setClaimed(Report $report): Report
-    {
-        if ($report->moderation_status !== ModerationStatus::Approved) {
-            throw ValidationException::withMessages([
-                'status' => ['Hanya laporan yang sudah disetujui yang dapat ditandai sebagai diklaim.'],
-            ]);
-        }
+            $this->notificationService->createForUser(
+                $updatedReport->user_id,
+                $title,
+                $message,
+                $updatedReport
+            );
 
-        return DB::transaction(function () use ($report) {
-            return $this->reportRepository->update($report, [
-                'status' => ReportStatus::Claimed->value,
-            ]);
-        });
-    }
+            $this->activityLogService->record($action, $message, $updatedReport, $admin);
 
-    private function setCompleted(Report $report): Report
-    {
-        $this->ensureReportCanBeCompleted($report);
-
-        return DB::transaction(function () use ($report) {
-            return $this->reportRepository->update($report, [
-                'status' => ReportStatus::Completed->value,
-            ]);
+            return $updatedReport->refresh()->load(['user', 'category', 'images'])->loadCount('claims');
         });
     }
 
@@ -212,8 +211,62 @@ class ReportService
     {
         if ($report->status !== ReportStatus::Claimed) {
             throw ValidationException::withMessages([
-                'status' => ['Hanya laporan yang sudah diklaim yang dapat ditandai sebagai selesai.'],
+                'status' => ['Laporan hanya dapat diselesaikan setelah klaim disetujui.'],
             ]);
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $data
+     * @return list<UploadedFile>
+     */
+    private function normalizeImages(array $data): array
+    {
+        $images = [];
+
+        if (($data['image'] ?? null) instanceof UploadedFile) {
+            $images[] = $data['image'];
+        }
+
+        foreach (($data['images'] ?? []) as $image) {
+            if ($image instanceof UploadedFile) {
+                $images[] = $image;
+            }
+        }
+
+        return $images;
+    }
+
+    /**
+     * @param list<array{path:string,file:UploadedFile}> $storedImages
+     */
+    private function persistReportImages(Report $report, array $storedImages): void
+    {
+        foreach ($storedImages as $index => $storedImage) {
+            /** @var UploadedFile $file */
+            $file = $storedImage['file'];
+
+            $report->images()->create([
+                'image_path' => $storedImage['path'],
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+                'sort_order' => $index,
+            ]);
+        }
+    }
+
+    private function deleteAllReportImages(Report $report): void
+    {
+        $report->loadMissing('images');
+
+        foreach ($report->images as $image) {
+            $this->imageStorageService->delete($image->image_path);
+            $image->delete();
+        }
+
+        if ($report->image_path) {
+            $this->imageStorageService->delete($report->image_path);
         }
     }
 }

@@ -12,13 +12,15 @@ class StoreClaimRequest extends FormRequest
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function rules(): array
     {
         return [
             'report_id' => ['required', 'integer', 'exists:reports,id'],
-            'proof_text' => ['required', 'string', 'min:20', 'max:5000'],
+            'proof_text' => ['required', 'string', 'min:10'],
+            'images' => ['nullable', 'array', 'max:5'],
+            'images.*' => ['image', 'max:4096'],
         ];
     }
 }
