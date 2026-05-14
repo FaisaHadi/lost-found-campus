@@ -9,6 +9,7 @@ use App\Policies\ClaimPolicy;
 use App\Policies\NotificationPolicy;
 use App\Policies\ReportPolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production') && str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
         Gate::policy(Report::class, ReportPolicy::class);
         Gate::policy(Claim::class, ClaimPolicy::class);
         Gate::policy(Notification::class, NotificationPolicy::class);
