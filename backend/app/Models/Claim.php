@@ -45,6 +45,11 @@ class Claim extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
+    public function images(): HasMany
+    {
+        return $this->hasMany(ClaimImage::class)->orderBy('sort_order');
+    }
+
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);

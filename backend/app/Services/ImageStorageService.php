@@ -9,25 +9,29 @@ use Illuminate\Support\Str;
 class ImageStorageService
 {
     private const REPORT_IMAGE_DIRECTORY = 'reports';
+    private const CLAIM_IMAGE_DIRECTORY = 'claims';
 
     public function storeReportImage(UploadedFile $image): string
     {
-        $extension = $image->guessExtension() ?: $image->extension() ?: 'jpg';
-        $filename = Str::uuid()->toString().'.'.$extension;
+        return $this->storeImage($image, self::REPORT_IMAGE_DIRECTORY);
+    }
 
-        return $image->storeAs(self::REPORT_IMAGE_DIRECTORY, $filename, 'public');
+    public function storeClaimImage(UploadedFile $image): string
+    {
+        return $this->storeImage($image, self::CLAIM_IMAGE_DIRECTORY);
     }
 
     public function delete(?string $path): void
     {
-        if (! $path) {
-            return;
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
         }
+    }
 
-        $disk = Storage::disk('public');
+    private function storeImage(UploadedFile $image, string $directory): string
+    {
+        $filename = Str::uuid()->toString().'.'.$image->getClientOriginalExtension();
 
-        if ($disk->exists($path)) {
-            $disk->delete($path);
-        }
+        return $image->storeAs($directory, $filename, 'public');
     }
 }

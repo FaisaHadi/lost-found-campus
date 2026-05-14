@@ -7,14 +7,20 @@ use App\Models\User;
 use App\Repositories\AuthRepository;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
     public function __construct(
-        private readonly AuthRepository $authRepository
-    ) {}
+        private readonly AuthRepository $authRepository,
+        private readonly ActivityLogService $activityLogService,
+    ) {
+    }
 
+    /**
+     * @param array{name:string,email:string,password:string} $data
+     * @return array{user:User,token:string,token_type:string}
+     */
     public function register(array $data): array
     {
         $user = $this->authRepository->createUser([
@@ -24,9 +30,15 @@ class AuthService
             'role' => UserRole::User->value,
         ]);
 
+        $this->activityLogService->record('register', 'Pengguna baru melakukan registrasi.', $user, $user);
+
         return $this->tokenPayload($user);
     }
 
+    /**
+     * @param array{email:string,password:string} $credentials
+     * @return array{user:User,token:string,token_type:string}
+     */
     public function login(array $credentials): array
     {
         $user = $this->authRepository->findUserByEmail($credentials['email']);
@@ -37,29 +49,28 @@ class AuthService
             ]);
         }
 
+        $this->activityLogService->record('login', 'Pengguna berhasil masuk.', $user, $user);
+
         return $this->tokenPayload($user);
     }
 
     public function logout(User $user, ?string $plainTextToken = null): void
     {
-        $token = $user->currentAccessToken();
-
-        if ($token instanceof PersonalAccessToken) {
-            $token->delete();
-
-            return;
-        }
-
         if ($plainTextToken) {
-            PersonalAccessToken::findToken($plainTextToken)?->delete();
+            JWTAuth::setToken($plainTextToken)->invalidate();
         }
+
+        $this->activityLogService->record('logout', 'Pengguna keluar dari sistem.', $user, $user);
     }
 
+    /**
+     * @return array{user:User,token:string,token_type:string}
+     */
     private function tokenPayload(User $user): array
     {
         return [
             'user' => $user,
-            'token' => $user->createToken('api-token')->plainTextToken,
+            'token' => JWTAuth::fromUser($user),
             'token_type' => 'Bearer',
         ];
     }

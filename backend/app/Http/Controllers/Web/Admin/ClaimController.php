@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Admin\ClaimFilterRequest;
 use App\Models\Claim;
+use App\Models\User;
 use App\Services\ClaimService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ClaimController extends Controller
@@ -14,6 +16,19 @@ class ClaimController extends Controller
     public function __construct(
         private readonly ClaimService $claimService
     ) {}
+
+    /**
+     * Web admin login memakai guard web/session, bukan guard api/JWT.
+     * Helper ini mencegah reviewer/admin terkirim null ke ClaimService.
+     */
+    private function currentAdmin(): User
+    {
+        $admin = Auth::guard('web')->user() ?? request()->user();
+
+        abort_if($admin === null, 403, 'Admin user tidak ditemukan. Silakan login ulang.');
+
+        return $admin;
+    }
 
     public function index(ClaimFilterRequest $request): View
     {
@@ -40,7 +55,7 @@ class ClaimController extends Controller
     {
         $this->authorize('approve', $claim);
 
-        $this->claimService->approve($claim, request()->user());
+        $this->claimService->approve($claim, $this->currentAdmin());
 
         return back()->with('success', 'Klaim disetujui, status laporan diperbarui, dan pengaju diberi notifikasi.');
     }
@@ -49,8 +64,14 @@ class ClaimController extends Controller
     {
         $this->authorize('reject', $claim);
 
-        $this->claimService->reject($claim, request()->user());
+        $reason = request()->input('reason')
+            ?? request()->input('admin_note')
+            ?? request()->input('rejection_reason')
+            ?? request()->input('note')
+            ?? 'Klaim ditolak oleh admin.';
 
-        return back()->with('success', 'Klaim ditolak dan pengaju diberi notifikasi.');
+        $this->claimService->reject($claim, $this->currentAdmin(), $reason);
+
+        return back()->with('success', 'Klaim ditolak dan pengaju telah diberi notifikasi.');
     }
 }
